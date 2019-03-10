@@ -8,18 +8,30 @@ or using `getopt` or similar.
 ## Quick example
 
 ```console
-gotopt2 <<EOF -a -b=foo -c=10 --name value arg1 arg2
-- flag:
-  short: "a"
+gotopt2 -a -b=foo -c=10 --name value arg1 arg2 <<EOF
+flags:
+- name: a
   type: bool
-  help: "Some help text"
+  help: "A boolean value"
+- name: b
+  type: string
+  help: "A string value"
+- name: c
+  type: int
+  help: "An int value"
+- name: "name"
+  type: string
+  help: "A string name"
+- name: "last_name"
+  type: string
+  default: "Smith"
 EOF
 # gotopt2:generated:begin
 readonly gotopt2_a=true
 readonly gotopt2_b="foo"
 readonly gotopt2_c=10
 readonly gotopt2_name="value"
-readonly gotopt2_rest=("arg1" "arg2")
+readonly gotopt2_arg=("arg1" "arg2")
 # gotopt2:generated:end
 ```
 

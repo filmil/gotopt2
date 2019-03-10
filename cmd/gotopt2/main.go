@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	if err := opts.Run(os.Stdin, os.Args, os.Stdout); err != nil {
+	if err := opts.Run(os.Stdin, os.Args[1:], os.Stdout); err != nil {
 		glog.Fatalf("unexpected error: %v", err)
 	}
 }
