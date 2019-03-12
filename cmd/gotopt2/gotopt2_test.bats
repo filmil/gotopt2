@@ -13,8 +13,8 @@ flags:
   help: "This is some flag value."
 EOF
 )
-  expected=$'# getopt:generated:begin
+  expected=$'# gotopt2:generated:begin
 readonly gotopt2_foo=\"bar\"
-# getopt:generated:end'
+# gotopt2:generated:end'
   [ "${result}" == "${expected}" ]
 }

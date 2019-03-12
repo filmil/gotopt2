@@ -29,10 +29,10 @@ flags:
   type: string
   default: "value"
 `,
-			expected: `# getopt:generated:begin
+			expected: `# gotopt2:generated:begin
 readonly gotopt2_baz="value"
 readonly gotopt2_foo="bar"
-# getopt:generated:end
+# gotopt2:generated:end
 `,
 		},
 		{
@@ -56,9 +56,9 @@ flags:
   help: "This is foo"
   type: bool
 `,
-			expected: `# getopt:generated:begin
+			expected: `# gotopt2:generated:begin
 readonly gotopt2_foo="true"
-# getopt:generated:end
+# gotopt2:generated:end
 `,
 		},
 		{
@@ -70,9 +70,9 @@ flags:
   help: "This is foo"
   type: bool
 `,
-			expected: `# getopt:generated:begin
+			expected: `# gotopt2:generated:begin
 readonly gotopt2_foo=""
-# getopt:generated:end
+# gotopt2:generated:end
 `,
 		},
 		{
@@ -84,10 +84,10 @@ flags:
   help: "This is foo"
   type: bool
 `,
-			expected: `# getopt:generated:begin
+			expected: `# gotopt2:generated:begin
 readonly gotopt2_foo="true"
-readonly gotopt2_args=("file1" "file2")
-# getopt:generated:end
+readonly gotopt2_args__=("file1" "file2")
+# gotopt2:generated:end
 `,
 		},
 		{
@@ -111,13 +111,13 @@ flags:
 - name: "boolarg"
   type: bool
 `,
-			expected: `# getopt:generated:begin
+			expected: `# gotopt2:generated:begin
 readonly gotopt2_boolarg="true"
 readonly gotopt2_intarg="10"
 readonly gotopt2_strarg2="bar"
 readonly gotopt2_strarg="foo"
-readonly gotopt2_args=("param1" "param2")
-# getopt:generated:end
+readonly gotopt2_args__=("param1" "param2")
+# gotopt2:generated:end
 `,
 		},
 	}

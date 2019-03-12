@@ -75,10 +75,10 @@ func Run(r io.Reader, args []string, w io.Writer) error {
 		return err
 	}
 
-	fmt.Fprintf(w, "# getopt:generated:begin\n")
+	fmt.Fprintf(w, "# gotopt2:generated:begin\n")
 	wrFlags(fs, w)
 	wrArgs(args, fs, w)
-	fmt.Fprintf(w, "# getopt:generated:end\n")
+	fmt.Fprintf(w, "# gotopt2:generated:end\n")
 	return nil
 }
 
@@ -177,6 +177,6 @@ func wrArgs(args []string, fs *flag.FlagSet, w io.Writer) {
 	for _, arg := range fs.Args() {
 		a = append(a, fmt.Sprintf("%q", arg))
 	}
-	// Add leftover args to array
-	fmt.Fprintf(w, "readonly gotopt2_args=(%s)\n", strings.Join(a, " "))
+	// Add leftover args to array.
+	fmt.Fprintf(w, "readonly gotopt2_args__=(%s)\n", strings.Join(a, " "))
 }

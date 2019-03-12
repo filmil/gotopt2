@@ -131,8 +131,10 @@ given the opportunity to implement a user-friendlier approach.
 
 ## What's wrong with argbash (https://argbash.io)?
 
-You need to carry `m4` around with you.  Which, given that it's 2019 through my
-window when I write this, is a horrible predicament.
+Nothing, if it fulfills your use case.
+
+I didn't like that you need to carry `m4` around with you.  Which, given that
+it's 2019 through my window when I write this, is a horrible predicament.
 
 You also need to have a `Makefile` that builds your final script, which is not
 necessarily something you'd want to do.  All else being equal, a small go
