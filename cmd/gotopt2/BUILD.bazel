@@ -1,4 +1,5 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+load("@bazel_bats//:rules.bzl", "bats_test")
 
 go_library(
     name = "go_default_library",
@@ -15,4 +16,20 @@ go_binary(
     name = "gotopt2",
     embed = [":go_default_library"],
     visibility = ["//visibility:public"],
+)
+
+bats_test(
+    name = "gotopt2_test",
+	srcs = ["gotopt2_test.bats"],
+	deps = [":gotopt2"],
+)
+
+sh_test(
+    name = "gotopt_test_sh",
+	srcs = ["gotopt2_test.sh"],
+	data = [":gotopt2"],
+	args = [
+        "$(location :gotopt2)",
+		"--foo=bar",
+    ],
 )
