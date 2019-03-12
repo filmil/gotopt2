@@ -98,6 +98,30 @@ This means for example that you get `--help` for free.  And that the help
 text is auto-generated from the information you pass at configuration time.
 And that both long and short option names are supported.
 
+# Installation
+
+## Prerequisites
+
+- bazel: http://bazel.build
+
+## Getting the source
+
+```console
+git clone https://github.com/filmil/gotopt2
+```
+
+## Testing the source code
+
+```console
+bazel test //...
+```
+
+## Building the gotopt2 binary
+
+```
+bazel build //cmd/...
+```
+
 # Q&A
 
 ## Why is it named gotopt2?
