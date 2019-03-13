@@ -50,7 +50,7 @@ go_repository(
 git_repository(
     name = "bazel_bats",
     remote = "https://github.com/filmil/bazel-bats",
-    tag = "v0.1.1",
+    tag = "v0.1.3",
 )
 
 load("@bazel_bats//:deps.bzl", "bazel_bats_dependencies")

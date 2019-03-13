@@ -22,6 +22,9 @@ bats_test(
     name = "gotopt2_test",
 	srcs = ["gotopt2_test.bats"],
 	deps = [":gotopt2"],
+	env = {
+        "GOTOPT2": "$(location :gotopt2)",
+	},
 )
 
 sh_test(

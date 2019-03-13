@@ -1,10 +1,15 @@
 #!/usr/bin/env bats
 
-# This should not be hardcoded but at the moment there is no good way to pass
-# arguments into bats test scripts.
-readonly GOTOPT2="./cmd/gotopt2/linux_amd64_stripped/gotopt2"
+# TODO(filmil): This should not be a hardcoded value.
+GOTOPT2="./cmd/gotopt2/linux_amd64_stripped/gotopt2"
+
+@test "Is program available" {
+  [ "${GOTOPT2}" != "" ]
+}
 
 @test "Basic string flag parsing" {
+  echo PWD:     ${PWD}
+  echo GOTOPT2: ${GOTOPT2}
   result=$("${GOTOPT2}" --foo=bar <<EOF
 flags:
 - name: "foo"
