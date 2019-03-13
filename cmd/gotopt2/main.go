@@ -5,11 +5,10 @@ import (
 	"os"
 
 	"github.com/filmil/gotopt2/pkg/opts"
-	"github.com/golang/glog"
 )
 
 func main() {
 	if err := opts.Run(os.Stdin, os.Args[1:], os.Stdout); err != nil {
-		glog.Fatalf("unexpected error: %v", err)
+		os.Exit(142)
 	}
 }

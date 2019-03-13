@@ -5,11 +5,11 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"log"
 	"sort"
 	"strconv"
 	"strings"
 
-	"github.com/golang/glog"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -71,7 +71,6 @@ func Run(r io.Reader, args []string, w io.Writer) error {
 		return err
 	}
 	if err := fs.Parse(args); err != nil {
-		fs.Usage()
 		return err
 	}
 
@@ -141,7 +140,7 @@ func flagSet(c Config) (*flag.FlagSet, error) {
 			}
 			fs.Int(f.Name, def, f.Help)
 		default:
-			glog.Warningf("unknown value: %+v", f)
+			log.Printf("unknown value: %+v", f)
 			// Skip unknown values?
 		}
 	}
