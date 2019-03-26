@@ -158,7 +158,9 @@ func wrFlags(fs *flag.FlagSet, w io.Writer) {
 		if _, ok := f.Value.(isbooler); !ok || f.Value.String() != "false" {
 			v = f.Value.String()
 		}
-		out = append(out, fmt.Sprintf("readonly gotopt2_%v=%q\n", f.Name, v))
+		r := strings.NewReplacer("-", "_")
+		name := r.Replace(f.Name)
+		out = append(out, fmt.Sprintf("readonly gotopt2_%v=%q\n", name, v))
 	})
 	// Ensure that the output is stable.
 	sort.Strings(out)
