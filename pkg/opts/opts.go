@@ -15,7 +15,13 @@ import (
 
 // Config represents the option parsing configuration
 type Config struct {
+	// Flags describes each flag to be parsed and its configuration.
 	Flags []Flag `yaml:"flags"`
+	// FalseValue is the value to generate for a false-valued Boolean variable.
+	// It is "" by default, but some scripts may find it more convenient for
+	// that text to be "false", or "off" or some such.  Note that this does not
+	// affect the way the user can specify the flag.
+	FalseValue string `yaml:"falseValue"`
 }
 
 // FType is the type of the flag variable
@@ -75,7 +81,7 @@ func Run(r io.Reader, args []string, w io.Writer) error {
 	}
 
 	fmt.Fprintf(w, "# gotopt2:generated:begin\n")
-	wrFlags(fs, w)
+	wrFlags(fs, c.FalseValue, w)
 	wrArgs(args, fs, w)
 	fmt.Fprintf(w, "# gotopt2:generated:end\n")
 	return nil
@@ -147,7 +153,7 @@ func flagSet(c Config) (*flag.FlagSet, error) {
 	return fs, nil
 }
 
-func wrFlags(fs *flag.FlagSet, w io.Writer) {
+func wrFlags(fs *flag.FlagSet, falseVal string, w io.Writer) {
 	// Produce the output
 	var out []string
 	fs.VisitAll(func(f *flag.Flag) {
@@ -157,6 +163,9 @@ func wrFlags(fs *flag.FlagSet, w io.Writer) {
 		}
 		if _, ok := f.Value.(isbooler); !ok || f.Value.String() != "false" {
 			v = f.Value.String()
+		}
+		if v == "" {
+			v = falseVal
 		}
 		r := strings.NewReplacer("-", "_")
 		name := r.Replace(f.Name)

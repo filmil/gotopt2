@@ -105,6 +105,21 @@ readonly gotopt2_foo=""
 `,
 		},
 		{
+			name: "Bool False with custom value for false",
+			args: []string{},
+			input: `
+falseValue: "false"
+flags:
+- name: "foo"
+  help: "This is foo"
+  type: bool
+`,
+			expected: `# gotopt2:generated:begin
+readonly gotopt2_foo="false"
+# gotopt2:generated:end
+`,
+		},
+		{
 			name: "Bool with arg",
 			args: []string{"--foo", "file1", "file2"},
 			input: `
