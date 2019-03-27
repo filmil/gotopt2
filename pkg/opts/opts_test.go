@@ -76,6 +76,21 @@ readonly gotopt2_foo_bar="true"
 `,
 		},
 		{
+			name: "Arg with hyphen",
+			args: []string{"--", "--foo"},
+			input: `
+flags:
+- name: "foo"
+  help: "This is foo"
+  type: bool
+`,
+			expected: `# gotopt2:generated:begin
+readonly gotopt2_foo=""
+readonly gotopt2_args__=("--foo")
+# gotopt2:generated:end
+`,
+		},
+		{
 			name: "Bool False",
 			args: []string{},
 			input: `
