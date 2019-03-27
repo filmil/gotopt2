@@ -2,8 +2,8 @@
 
 `gotopt2` is a program that outputs its command line arguments as a
 snippet of shell script that can be readily evaluated. You can use it to 
-parse command line options in your shell script instead of rolling your own,
-or using `getopt` or similar.
+parse command line options in your shell script instead of rolling your own shell
+parsing code, or using `getopt` or similar.
 
 ## Quick example
 
@@ -31,7 +31,7 @@ readonly gotopt2_a=true
 readonly gotopt2_b="foo"
 readonly gotopt2_c=10
 readonly gotopt2_name="value"
-readonly gotopt2_arg=("arg1" "arg2")
+readonly gotopt2_args__=("arg1" "arg2")
 # gotopt2:generated:end
 ```
 
@@ -140,27 +140,31 @@ forward to `getopt3` if you feel so inclined.
 
 Nothing, if it fulfills your use case.
 
-I have, however, found it very arcane to use, and quite difficult to install
-where I needed it.  And there are two versions of it. 
+I have a few remarks on the way getopt does its work, though, and if you agree
+with those, you may find `gotopt2` useful:
 
-In contrast, one self-contained binary that you can build on the spot is very
-easy to carry around and include in your own code, so I opted for that.
+- The configuration syntax is a bit arcane.
+- Once `getopt` finishes, you still need to parse the options yourself, they
+  are just ordered nicely.
+
+In contrast, `gotopt2` is a self-contained binary.  You can simply carry it
+around and include in your own code, so I opted for that.
 
 ## What's wrong with `gotopt`?
 
 Nothing, if it fulfills your use case.
 
-It's reimplementing `getopt`.  I don't see why one would want to do that if
+It's reimplementing `getopt`.  I don't see why one would want to do that
 given the opportunity to implement a user-friendlier approach.
 
 ## What's wrong with argbash (https://argbash.io)?
 
 Nothing, if it fulfills your use case.
 
-I didn't like that you need to carry `m4` around with you.  Which, given that
-it's 2019 through my window when I write this, is a horrible predicament.
+I didn't like that you need to carry `m4` around with you.  `m4` is a relic
+that should no longer be used.
 
-You also need to have a `Makefile` that builds your final script, which is not
+You need to have a `Makefile` that builds your final script, which is not
 necessarily something you'd want to do.  All else being equal, a small go
 program is in my experience a much more robust building block than an untested
 and  sprawling `bash` string parsing library.
