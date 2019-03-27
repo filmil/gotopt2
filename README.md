@@ -1,11 +1,14 @@
 # `gotopt2`: a self-contained shell flags or options parser, written in go
 
-`gotopt2` is a program that outputs its command line arguments as a
-snippet of shell script that can be readily evaluated. You can use it to 
-parse command line options in your shell script instead of rolling your own shell
-parsing code, or using `getopt` or similar.
+`gotopt2` is a program that outputs its command line arguments as a snippet of
+shell script that can be readily evaluated.
+
+You can use it to parse command line options in your shell script instead of
+rolling your own flag parsing code, or using `getopt` or similar.
 
 ## Quick example
+
+Here is how to check, quickly, what `gotopt2` does for you.
 
 ```console
 gotopt2 -a -b=foo -c=10 --name value arg1 arg2 <<EOF
@@ -34,6 +37,86 @@ readonly gotopt2_name="value"
 readonly gotopt2_args__=("arg1" "arg2")
 # gotopt2:generated:end
 ```
+
+# Installation
+
+```console
+go install github.com/filmil/gotopt2/...
+```
+
+## Prerequisites
+
+To test the binary, you will need to use `bazel`.  `go test` gets you part of
+the way, but with it you can not test the interaction with shell scripts.
+
+- bazel: http://bazel.build
+
+## Getting the source
+
+```console
+git clone https://github.com/filmil/gotopt2
+```
+
+## Testing the source code
+
+```console
+bazel test //...
+```
+
+## Building the gotopt2 binary
+
+```
+bazel build //cmd/...
+```
+
+# Example use in a shell script
+
+Here is how you would use `gotopt2` in a shell script.  Note how `gotopt2` does
+all the parsing for you and provides you with environment variables with
+already parsed values.
+
+```bash
+#!/bin/bash
+readonly output=$("${GOTOPT2}" "${@}" <<EOF
+flags:
+- name: "foo"
+  type: string
+  default: "something"
+- name: "bar"
+  type: int
+  default: 42
+- name: "baz"
+  type: bool
+  default: true
+EOF
+)
+# Evaluate the output of the call to gotopt2, shell vars assignment is here.
+eval "${output}"
+if [[ "${gotopt2_foo}" != "bar" ]]; then
+  echo "Want: bar; got: '${gotopt_foo}'"
+  exit 1
+fi
+```
+
+# Configuration
+
+`gotopt2` is configured by passing a configuration into standard input. The 
+configuration is a valid YAML text.  The program is configured this way so that
+no flag settings end up polluting the command line.
+
+There is an implicit flag `--help` which prints the usage, based on the
+information provided in the configuration.
+
+| Config Element | Child Elements | Description |
+| -- | -- | -- |
+| top level | falseValue, flags | This is the entire configuration file. |
+| falseValue | | string: "": Value used for the value of "false". |
+| flags | name, type, default, help | A sequence of flag configurations |
+| name  | | Flag name, e.g. "foo" |
+| type  | | Flag type to parse, one of: "string", "int", "bool" |
+| default | | The default value to set for the flag if left unspecified. Optional. |
+| help | | The help text to set for the flag value. |
+
 
 # Use Case
 
@@ -97,30 +180,6 @@ should be in an easily understandable, preferably self-documenting forms.
 This means for example that you get `--help` for free.  And that the help
 text is auto-generated from the information you pass at configuration time.
 And that both long and short option names are supported.
-
-# Installation
-
-## Prerequisites
-
-- bazel: http://bazel.build
-
-## Getting the source
-
-```console
-git clone https://github.com/filmil/gotopt2
-```
-
-## Testing the source code
-
-```console
-bazel test //...
-```
-
-## Building the gotopt2 binary
-
-```
-bazel build //cmd/...
-```
 
 # Q&A
 
