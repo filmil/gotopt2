@@ -1,5 +1,7 @@
 # `gotopt2`: a self-contained shell flags or options parser, written in go
 
+[![Build Status](https://travis-ci.com/filmil/gotopt2.svg?branch=master)](https://travis-ci.com/filmil/gotopt2)
+
 `gotopt2` is a program that outputs its command line arguments as a snippet of
 shell script that can be readily evaluated.
 
