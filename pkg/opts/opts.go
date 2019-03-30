@@ -22,6 +22,8 @@ type Config struct {
 	// that text to be "false", or "off" or some such.  Note that this does not
 	// affect the way the user can specify the flag.
 	FalseValue string `yaml:"falseValue"`
+	// AllCaps causes the variable name to be rendered in ALL_CAPS.
+	AllCaps bool `yaml:"ALL_CAPS"`
 }
 
 // FType is the type of the flag variable
@@ -81,7 +83,7 @@ func Run(r io.Reader, args []string, w io.Writer) error {
 	}
 
 	fmt.Fprintf(w, "# gotopt2:generated:begin\n")
-	wrFlags(fs, c.FalseValue, w)
+	wrFlags(fs, c.FalseValue, c.AllCaps, w)
 	wrArgs(args, fs, w)
 	fmt.Fprintf(w, "# gotopt2:generated:end\n")
 	return nil
@@ -153,7 +155,7 @@ func flagSet(c Config) (*flag.FlagSet, error) {
 	return fs, nil
 }
 
-func wrFlags(fs *flag.FlagSet, falseVal string, w io.Writer) {
+func wrFlags(fs *flag.FlagSet, falseVal string, toUpper bool, w io.Writer) {
 	// Produce the output
 	var out []string
 	fs.VisitAll(func(f *flag.Flag) {
@@ -169,7 +171,11 @@ func wrFlags(fs *flag.FlagSet, falseVal string, w io.Writer) {
 		}
 		r := strings.NewReplacer("-", "_")
 		name := r.Replace(f.Name)
-		out = append(out, fmt.Sprintf("readonly gotopt2_%v=%q\n", name, v))
+		fullVarName := fmt.Sprintf("gotopt2_%v", name)
+		if toUpper {
+			fullVarName = strings.ToUpper(fullVarName)
+		}
+		out = append(out, fmt.Sprintf("readonly %v=%q\n", fullVarName, v))
 	})
 	// Ensure that the output is stable.
 	sort.Strings(out)

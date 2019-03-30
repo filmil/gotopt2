@@ -36,6 +36,26 @@ readonly gotopt2_foo="bar"
 `,
 		},
 		{
+			name: "Basic with ALL_CAPS",
+			args: []string{"-foo=bar"},
+			input: `
+ALL_CAPS: true
+flags:
+- name: "foo"
+  help: "This is foo"
+  type: string
+- name: "baz"
+  help: "This is baz"
+  type: string
+  default: "value"
+`,
+			expected: `# gotopt2:generated:begin
+readonly GOTOPT2_BAZ="value"
+readonly GOTOPT2_FOO="bar"
+# gotopt2:generated:end
+`,
+		},
+		{
 			name: "Unknown flag value",
 			args: []string{"-foo=bar"},
 			input: `
