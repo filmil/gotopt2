@@ -26,6 +26,9 @@ type Config struct {
 	AllCaps bool `yaml:"ALL_CAPS"`
 	// Prefix is prepended to the full variable name.
 	Prefix string `yaml:"prefix"`
+	// Declaration is the default declaration word to use.  For example
+	// "readonly" or "local".
+	Declaration string `yaml:"declaration"`
 }
 
 // FType is the type of the flag variable
@@ -85,8 +88,8 @@ func Run(r io.Reader, args []string, w io.Writer) error {
 	}
 
 	fmt.Fprintf(w, "# gotopt2:generated:begin\n")
-	wrFlags(fs, c.FalseValue, c.AllCaps, c.Prefix, w)
-	wrArgs(args, fs, w)
+	wrFlags(fs, c.FalseValue, c.AllCaps, c.Prefix, c.Declaration, w)
+	wrArgs(args, fs, c.Prefix, c.Declaration, c.AllCaps, w)
 	fmt.Fprintf(w, "# gotopt2:generated:end\n")
 	return nil
 }
@@ -157,7 +160,25 @@ func flagSet(c Config) (*flag.FlagSet, error) {
 	return fs, nil
 }
 
-func wrFlags(fs *flag.FlagSet, falseVal string, toUpper bool, prefix string, w io.Writer) {
+func declLine(name, value, falseVal, prefix, decl string, toUpper, quote bool) string {
+	r := strings.NewReplacer("-", "_")
+	name = r.Replace(name)
+	fullVarName := fmt.Sprintf("%vgotopt2_%v", prefix, name)
+	if toUpper {
+		fullVarName = strings.ToUpper(fullVarName)
+	}
+	assignment := fmt.Sprintf("%v=%q", fullVarName, value)
+	if !quote {
+		assignment = fmt.Sprintf("%v=%v", fullVarName, value)
+	}
+	if decl == "" {
+		return assignment
+	}
+	return strings.Join([]string{decl, assignment}, " ")
+}
+
+func wrFlags(fs *flag.FlagSet, falseVal string, toUpper bool,
+	prefix string, decl string, w io.Writer) {
 	// Produce the output
 	var out []string
 	fs.VisitAll(func(f *flag.Flag) {
@@ -171,13 +192,8 @@ func wrFlags(fs *flag.FlagSet, falseVal string, toUpper bool, prefix string, w i
 		if v == "" {
 			v = falseVal
 		}
-		r := strings.NewReplacer("-", "_")
-		name := r.Replace(f.Name)
-		fullVarName := fmt.Sprintf("%vgotopt2_%v", prefix, name)
-		if toUpper {
-			fullVarName = strings.ToUpper(fullVarName)
-		}
-		out = append(out, fmt.Sprintf("readonly %v=%q\n", fullVarName, v))
+		dl := declLine(f.Name, v, falseVal, prefix, decl, toUpper, true)
+		out = append(out, fmt.Sprintf("%s\n", dl))
 	})
 	// Ensure that the output is stable.
 	sort.Strings(out)
@@ -187,7 +203,7 @@ func wrFlags(fs *flag.FlagSet, falseVal string, toUpper bool, prefix string, w i
 }
 
 // Quote remaining args if nonempty
-func wrArgs(args []string, fs *flag.FlagSet, w io.Writer) {
+func wrArgs(args []string, fs *flag.FlagSet, prefix, decl string, toUpper bool, w io.Writer) {
 	if fs.NArg() == 0 {
 		return
 	}
@@ -195,6 +211,7 @@ func wrArgs(args []string, fs *flag.FlagSet, w io.Writer) {
 	for _, arg := range fs.Args() {
 		a = append(a, fmt.Sprintf("%q", arg))
 	}
-	// Add leftover args to array.
-	fmt.Fprintf(w, "readonly gotopt2_args__=(%s)\n", strings.Join(a, " "))
+	allArgs := strings.Join(a, " ")
+	dl := declLine("args__", fmt.Sprintf("(%s)", allArgs), "()", prefix, decl, toUpper, false)
+	fmt.Fprintf(w, "%s\n", dl)
 }

@@ -18,7 +18,7 @@ func TestGotopt2(t *testing.T) {
 	}{
 		{
 			name: "Basic",
-			args: []string{"-foo=bar"},
+			args: []string{"-foo=bar", "arg"},
 			input: `
 flags:
 - name: "foo"
@@ -30,14 +30,31 @@ flags:
   default: "value"
 `,
 			expected: `# gotopt2:generated:begin
-readonly gotopt2_baz="value"
-readonly gotopt2_foo="bar"
+gotopt2_baz="value"
+gotopt2_foo="bar"
+gotopt2_args__=("arg")
+# gotopt2:generated:end
+`,
+		},
+		{
+			name: "Basic with declaration",
+			args: []string{"-foo=bar", "arg"},
+			input: `
+declaration: "some_declaration"
+flags:
+- name: "foo"
+  help: "This is foo"
+  type: string
+`,
+			expected: `# gotopt2:generated:begin
+some_declaration gotopt2_foo="bar"
+some_declaration gotopt2_args__=("arg")
 # gotopt2:generated:end
 `,
 		},
 		{
 			name: "Basic with prefix",
-			args: []string{"-foo=bar"},
+			args: []string{"-foo=bar", "arg"},
 			input: `
 prefix: "some_prefix_"
 flags:
@@ -46,13 +63,14 @@ flags:
   type: string
 `,
 			expected: `# gotopt2:generated:begin
-readonly some_prefix_gotopt2_foo="bar"
+some_prefix_gotopt2_foo="bar"
+some_prefix_gotopt2_args__=("arg")
 # gotopt2:generated:end
 `,
 		},
 		{
 			name: "Basic with ALL_CAPS",
-			args: []string{"-foo=bar"},
+			args: []string{"-foo=bar", "arg"},
 			input: `
 ALL_CAPS: true
 flags:
@@ -65,8 +83,9 @@ flags:
   default: "value"
 `,
 			expected: `# gotopt2:generated:begin
-readonly GOTOPT2_BAZ="value"
-readonly GOTOPT2_FOO="bar"
+GOTOPT2_BAZ="value"
+GOTOPT2_FOO="bar"
+GOTOPT2_ARGS__=("arg")
 # gotopt2:generated:end
 `,
 		},
@@ -92,7 +111,7 @@ flags:
   type: bool
 `,
 			expected: `# gotopt2:generated:begin
-readonly gotopt2_foo="true"
+gotopt2_foo="true"
 # gotopt2:generated:end
 `,
 		},
@@ -106,7 +125,7 @@ flags:
   type: bool
 `,
 			expected: `# gotopt2:generated:begin
-readonly gotopt2_foo_bar="true"
+gotopt2_foo_bar="true"
 # gotopt2:generated:end
 `,
 		},
@@ -120,8 +139,8 @@ flags:
   type: bool
 `,
 			expected: `# gotopt2:generated:begin
-readonly gotopt2_foo=""
-readonly gotopt2_args__=("--foo")
+gotopt2_foo=""
+gotopt2_args__=("--foo")
 # gotopt2:generated:end
 `,
 		},
@@ -135,7 +154,7 @@ flags:
   type: bool
 `,
 			expected: `# gotopt2:generated:begin
-readonly gotopt2_foo=""
+gotopt2_foo=""
 # gotopt2:generated:end
 `,
 		},
@@ -150,7 +169,7 @@ flags:
   type: bool
 `,
 			expected: `# gotopt2:generated:begin
-readonly gotopt2_foo="false"
+gotopt2_foo="false"
 # gotopt2:generated:end
 `,
 		},
@@ -164,8 +183,8 @@ flags:
   type: bool
 `,
 			expected: `# gotopt2:generated:begin
-readonly gotopt2_foo="true"
-readonly gotopt2_args__=("file1" "file2")
+gotopt2_foo="true"
+gotopt2_args__=("file1" "file2")
 # gotopt2:generated:end
 `,
 		},
@@ -191,11 +210,11 @@ flags:
   type: bool
 `,
 			expected: `# gotopt2:generated:begin
-readonly gotopt2_boolarg="true"
-readonly gotopt2_intarg="10"
-readonly gotopt2_strarg2="bar"
-readonly gotopt2_strarg="foo"
-readonly gotopt2_args__=("param1" "param2")
+gotopt2_boolarg="true"
+gotopt2_intarg="10"
+gotopt2_strarg2="bar"
+gotopt2_strarg="foo"
+gotopt2_args__=("param1" "param2")
 # gotopt2:generated:end
 `,
 		},

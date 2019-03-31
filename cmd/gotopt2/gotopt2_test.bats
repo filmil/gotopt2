@@ -19,7 +19,7 @@ flags:
 EOF
 )
   expected=$'# gotopt2:generated:begin
-readonly gotopt2_foo=\"bar\"
+gotopt2_foo=\"bar\"
 # gotopt2:generated:end'
   [ "${result}" == "${expected}" ]
 }
