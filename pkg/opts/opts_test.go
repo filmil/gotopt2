@@ -36,6 +36,21 @@ readonly gotopt2_foo="bar"
 `,
 		},
 		{
+			name: "Basic with prefix",
+			args: []string{"-foo=bar"},
+			input: `
+prefix: "some_prefix_"
+flags:
+- name: "foo"
+  help: "This is foo"
+  type: string
+`,
+			expected: `# gotopt2:generated:begin
+readonly some_prefix_gotopt2_foo="bar"
+# gotopt2:generated:end
+`,
+		},
+		{
 			name: "Basic with ALL_CAPS",
 			args: []string{"-foo=bar"},
 			input: `

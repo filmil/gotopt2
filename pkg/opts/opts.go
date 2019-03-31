@@ -24,6 +24,8 @@ type Config struct {
 	FalseValue string `yaml:"falseValue"`
 	// AllCaps causes the variable name to be rendered in ALL_CAPS.
 	AllCaps bool `yaml:"ALL_CAPS"`
+	// Prefix is prepended to the full variable name.
+	Prefix string `yaml:"prefix"`
 }
 
 // FType is the type of the flag variable
@@ -83,7 +85,7 @@ func Run(r io.Reader, args []string, w io.Writer) error {
 	}
 
 	fmt.Fprintf(w, "# gotopt2:generated:begin\n")
-	wrFlags(fs, c.FalseValue, c.AllCaps, w)
+	wrFlags(fs, c.FalseValue, c.AllCaps, c.Prefix, w)
 	wrArgs(args, fs, w)
 	fmt.Fprintf(w, "# gotopt2:generated:end\n")
 	return nil
@@ -155,7 +157,7 @@ func flagSet(c Config) (*flag.FlagSet, error) {
 	return fs, nil
 }
 
-func wrFlags(fs *flag.FlagSet, falseVal string, toUpper bool, w io.Writer) {
+func wrFlags(fs *flag.FlagSet, falseVal string, toUpper bool, prefix string, w io.Writer) {
 	// Produce the output
 	var out []string
 	fs.VisitAll(func(f *flag.Flag) {
@@ -171,7 +173,7 @@ func wrFlags(fs *flag.FlagSet, falseVal string, toUpper bool, w io.Writer) {
 		}
 		r := strings.NewReplacer("-", "_")
 		name := r.Replace(f.Name)
-		fullVarName := fmt.Sprintf("gotopt2_%v", name)
+		fullVarName := fmt.Sprintf("%vgotopt2_%v", prefix, name)
 		if toUpper {
 			fullVarName = strings.ToUpper(fullVarName)
 		}
