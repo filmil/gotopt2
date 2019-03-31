@@ -32,11 +32,11 @@ flags:
   default: "Smith"
 EOF
 # gotopt2:generated:begin
-readonly gotopt2_a=true
-readonly gotopt2_b="foo"
-readonly gotopt2_c=10
-readonly gotopt2_name="value"
-readonly gotopt2_args__=("arg1" "arg2")
+gotopt2_a=true
+gotopt2_b="foo"
+gotopt2_c=10
+gotopt2_name="value"
+gotopt2_args__=("arg1" "arg2")
 # gotopt2:generated:end
 ```
 
@@ -112,6 +112,9 @@ information provided in the configuration.
 | Config Element | Child Elements | Description |
 | -- | -- | -- |
 | top level | falseValue, flags | This is the entire configuration file. |
+| ALL_CAPS | | bool (false): if set, generates ALL_CAPS variables. |
+| prefix | | string: "": If set, this string is prepended to generated variable names. |
+| declaration | | string: "": If set, this string is used as the declaration (e.g. "readonly", or "local")
 | falseValue | | string: "": Value used for the value of "false". |
 | flags | name, type, default, help | A sequence of flag configurations |
 | name  | | Flag name, e.g. "foo" |
