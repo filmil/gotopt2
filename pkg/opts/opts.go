@@ -39,6 +39,7 @@ const (
 	FTString
 	FTInt
 	FTBool
+	FTStringList
 )
 
 // UnmarshalYAML implements yaml.Unmarshaler
@@ -54,6 +55,8 @@ func (f *FType) UnmarshalYAML(fn func(interface{}) error) error {
 		*f = FTBool
 	case "int":
 		*f = FTInt
+	case "stringlist":
+		*f = FTStringList
 	default:
 		*f = FTUnknown
 	}
@@ -121,6 +124,37 @@ func parseInt(s string) (int, error) {
 	return v, nil
 }
 
+var _ flag.Getter = (*StringListFlag)(nil)
+
+// StringListFlag remembers string arguments
+type StringListFlag struct {
+	args []string
+}
+
+// Get implements flag.Getter
+func (s *StringListFlag) Get() interface{} {
+	return s.args
+}
+
+// Set implements flag.Getter
+func (s *StringListFlag) Set(v string) error {
+	if v == "" {
+		return nil
+	}
+	s.args = strings.Split(v, ",")
+	return nil
+}
+
+// String implements flag.Getter
+func (s *StringListFlag) String() string {
+	q := make([]string, len(s.args))
+	for i, a := range s.args {
+		q[i] = fmt.Sprintf("%q", a)
+	}
+	fmt.Printf("q=%+v, args=%+v", q, s.args)
+	return fmt.Sprintf("(%v)", strings.Join(q, " "))
+}
+
 func config(r io.Reader) (Config, error) {
 	d := yaml.NewDecoder(r)
 	d.SetStrict(true)
@@ -152,6 +186,9 @@ func flagSet(c Config) (*flag.FlagSet, error) {
 				return nil, err
 			}
 			fs.Int(f.Name, def, f.Help)
+		case FTStringList:
+			v := StringListFlag{}
+			fs.Var(&v, f.Name, f.RawDefault)
 		default:
 			log.Printf("unknown value: %+v", f)
 			// Skip unknown values?
@@ -192,7 +229,13 @@ func wrFlags(fs *flag.FlagSet, falseVal string, toUpper bool,
 		if v == "" {
 			v = falseVal
 		}
-		dl := declLine(f.Name, v, falseVal, prefix, decl, toUpper, true)
+		name := f.Name
+		quote := true
+		if _, ok := f.Value.(*StringListFlag); ok {
+			name = fmt.Sprintf("%v__list", name)
+			quote = false
+		}
+		dl := declLine(name, v, falseVal, prefix, decl, toUpper, quote)
 		out = append(out, fmt.Sprintf("%s\n", dl))
 	})
 	// Ensure that the output is stable.

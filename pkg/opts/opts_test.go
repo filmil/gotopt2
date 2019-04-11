@@ -37,6 +37,36 @@ gotopt2_args__=("arg")
 `,
 		},
 		{
+			name: "String list",
+			args: []string{"-foo=bar,baz,bat", "arg"},
+			input: `
+flags:
+- name: "foo"
+  help: "This is foo"
+  type: stringlist
+`,
+			expected: `# gotopt2:generated:begin
+gotopt2_foo__list=("bar" "baz" "bat")
+gotopt2_args__=("arg")
+# gotopt2:generated:end
+`,
+		},
+		{
+			// Note, an empty list is indistinguishable from an undefined variable.
+			name: "Empty string list",
+			args: []string{"-foo="},
+			input: `
+flags:
+- name: "foo"
+  help: "This is foo"
+  type: stringlist
+`,
+			expected: `# gotopt2:generated:begin
+gotopt2_foo__list=()
+# gotopt2:generated:end
+`,
+		},
+		{
 			name: "Basic with declaration",
 			args: []string{"-foo=bar", "arg"},
 			input: `

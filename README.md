@@ -13,7 +13,7 @@ rolling your own flag parsing code, or using `getopt` or similar.
 Here is how to check, quickly, what `gotopt2` does for you.
 
 ```console
-gotopt2 -a -b=foo -c=10 --name value arg1 arg2 <<EOF
+gotopt2 -a -b=foo -c=10 --name value arg1 arg2 --things=eenie,meenie <<EOF
 flags:
 - name: a
   type: bool
@@ -30,12 +30,15 @@ flags:
 - name: "last_name"
   type: string
   default: "Smith"
+- name: "things"
+  type: stringlist
 EOF
 # gotopt2:generated:begin
 gotopt2_a=true
 gotopt2_b="foo"
 gotopt2_c=10
 gotopt2_name="value"
+gotopt2_things__list=("eenie" "meenie")
 gotopt2_args__=("arg1" "arg2")
 # gotopt2:generated:end
 ```
@@ -118,7 +121,7 @@ information provided in the configuration.
 | falseValue | | string: "": Value used for the value of "false". |
 | flags | name, type, default, help | A sequence of flag configurations |
 | name  | | Flag name, e.g. "foo" |
-| type  | | Flag type to parse, one of: "string", "int", "bool" |
+| type  | | Flag type to parse, one of: "string", "int", "bool", "stringlist" |
 | default | | The default value to set for the flag if left unspecified. Optional. |
 | help | | The help text to set for the flag value. |
 
