@@ -53,7 +53,8 @@ go_repository(
 git_repository(
     name = "bazel_bats",
     remote = "https://github.com/filmil/bazel-bats",
-    tag = "v0.29.1",
+	commit = "78da0822ea339bd0292b5cc0b5de6930d91b3254",
+	shallow_since = "1569564445 -0700",
 )
 
 load("@bazel_bats//:deps.bzl", "bazel_bats_dependencies")
