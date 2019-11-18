@@ -43,3 +43,23 @@ EOF
   [ "${lines[2]}" == "  -foo string" ]
   [ "${#lines[@]}" -eq 4 ]
 }
+
+@test "Stringlist printing" {
+  run "${GOTOPT2}" --list=eenie,meenie,minie,moe <<EOF
+flags:
+- name: "list"
+  type: stringlist
+  default: ""
+  help: ""
+EOF
+  echo "${status}"
+  echo "${lines[0]}"
+  echo "${lines[1]}"
+  echo "${lines[2]}"
+  [ "${status}" -eq 0 ] # The exit code is randomly set to 142
+  [ "${lines[0]}" == "# gotopt2:generated:begin" ]
+  [ "${lines[1]}" == "gotopt2_list__list=(\"eenie\" \"meenie\" \"minie\" \"moe\")" ]
+  [ "${lines[2]}" == "# gotopt2:generated:end" ]
+  [ "${#lines[@]}" -eq 3 ]
+}
+

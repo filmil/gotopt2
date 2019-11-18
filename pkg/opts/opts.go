@@ -151,7 +151,6 @@ func (s *StringListFlag) String() string {
 	for i, a := range s.args {
 		q[i] = fmt.Sprintf("%q", a)
 	}
-	fmt.Printf("q=%+v, args=%+v", q, s.args)
 	return fmt.Sprintf("(%v)", strings.Join(q, " "))
 }
 
