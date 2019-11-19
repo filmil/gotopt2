@@ -56,10 +56,26 @@ EOF
   echo "${lines[0]}"
   echo "${lines[1]}"
   echo "${lines[2]}"
-  [ "${status}" -eq 0 ] # The exit code is randomly set to 142
+  [ "${status}" -eq 0 ]
   [ "${lines[0]}" == "# gotopt2:generated:begin" ]
   [ "${lines[1]}" == "gotopt2_list__list=(\"eenie\" \"meenie\" \"minie\" \"moe\")" ]
   [ "${lines[2]}" == "# gotopt2:generated:end" ]
   [ "${#lines[@]}" -eq 3 ]
+}
+
+@test "Help" {
+  run "${GOTOPT2}" --help <<EOF
+flags:
+- name: "list"
+  type: stringlist
+  default: ""
+  help: ""
+EOF
+  echo "${status}"
+  echo "${lines[0]}"
+  echo "${lines[1]}"
+  [ "${status}" -eq 11 ] # The exit code when --help is specified is 11
+  [ "${lines[0]}" == "Usage:" ]
+  [ "${lines[1]}" == "  -list value" ]
 }
 

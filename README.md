@@ -82,7 +82,7 @@ already parsed values.
 
 ```bash
 #!/bin/bash
-readonly output=$("${GOTOPT2}" "${@}" <<EOF
+GOTOPT2_OUTPUT=$(gotopt2 "${@}" <<EOF
 flags:
 - name: "foo"
   type: string
@@ -95,8 +95,13 @@ flags:
   default: true
 EOF
 )
+if [[ "$?" == "11" ]]; then
+  # When --help option is used, gotopt2 exits with code 11.
+  exit 1
+fi
+
 # Evaluate the output of the call to gotopt2, shell vars assignment is here.
-eval "${output}"
+eval "${GOTOPT2_OUTPUT}"
 if [[ "${gotopt2_foo}" != "bar" ]]; then
   echo "Want: bar; got: '${gotopt_foo}'"
   exit 1
@@ -188,6 +193,17 @@ should be in an easily understandable, preferably self-documenting forms.
 This means for example that you get `--help` for free.  And that the help
 text is auto-generated from the information you pass at configuration time.
 And that both long and short option names are supported.
+
+# Error codes
+
+When `gotopt2` exits, it sets one of the following numerical error codes:
+
+| Error code | Meaning |
+| 0 | OK
+| 11 | The flag `--help` was used and `gotopt2` printed usage. Note that this flag can also be defined in the config, in which case it is up to the script author to handle it. |
+| 12 | No configuration has been given to `gotopt2`.  Have you forgotten to pass it a configuration
+at stdin? |
+| 142 | Any other error |
 
 # Q&A
 

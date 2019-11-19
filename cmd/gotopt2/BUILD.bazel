@@ -36,3 +36,13 @@ sh_test(
 		"--foo=bar",
     ],
 )
+
+sh_test(
+    name = "gotopt_help_test_sh",
+	srcs = ["gotopt2_help_test.sh"],
+	data = [":gotopt2"],
+	args = [
+        "$(location :gotopt2)",
+		"--help",
+    ],
+)

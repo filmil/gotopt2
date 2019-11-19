@@ -1,6 +1,7 @@
 package opts
 
 import (
+	"flag"
 	"fmt"
 	"strings"
 	"testing"
@@ -35,6 +36,16 @@ gotopt2_foo="bar"
 gotopt2_args__=("arg")
 # gotopt2:generated:end
 `,
+		},
+		{
+			name: "Help",
+			args: []string{"--help"},
+			input: `
+flags:
+- name: "foo"
+  type: string
+`,
+			wantError: flag.ErrHelp,
 		},
 		{
 			name: "String list",
