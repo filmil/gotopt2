@@ -1,4 +1,4 @@
-name: Continuous build
+name: ci
 on:
   push:
     branches: [ master ]
@@ -13,6 +13,9 @@ jobs:
         uses: abhinavsingh/setup-bazel@v3
         with:
           version: 3.2.0
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: "bazel build //..."
       - name: Test
         run: "bazel test //..."
