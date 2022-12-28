@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
-# TODO(filmil): This should not be a hardcoded value.
-GOTOPT2="./cmd/gotopt2/linux_amd64_stripped/gotopt2"
+# The GOTOPT2 variable should be set in the BUILD.bazel script.
+GOTOPT2="${GOTOPT2:-./cmd/gotopt2/gotopt2_/gotopt2}"
 
 @test "Is program available" {
   [ "${GOTOPT2}" != "" ]

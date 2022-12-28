@@ -23,7 +23,9 @@ bats_test(
 	srcs = ["gotopt2_test.bats"],
 	deps = [":gotopt2"],
 	env = {
-        "GOTOPT2": "$(location :gotopt2)",
+        # This is the local path to the gotopt binary in the sandbox. It is
+        # not clear to me how to get the non-hardcoded path.
+        "GOTOPT2": "./cmd/gotopt2/gotopt2_/gotopt2",
 	},
 )
 
