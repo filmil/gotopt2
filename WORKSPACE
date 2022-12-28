@@ -52,7 +52,7 @@ go_repository(
 go_repository(
     name = "in_gopkg_yaml_v2",
     importpath = "gopkg.in/yaml.v2",
-    tag = "v2.2.2",
+    tag = "v2.2.8",
 )
 
 git_repository(
