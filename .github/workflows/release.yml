@@ -21,16 +21,10 @@ jobs:
         run: "bazel test //..."
       - name: "Build binaries"
         run: "bazel build --platforms=@io_bazel_rules_go//go/toolchain:${{ matrix.os }}_${{ matrix.arch}} //cmd/..."
-      - name: Publish linux_amd64
+      - name: Publish ${{ matrix.os }} ${{ matrix. arch }}
         uses: skx/github-action-publish-binaries@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: 'bazel-bin/cmd/gotopt2/linux_amd64_stripped/gotopt2'
-      - name: Publish darwin_amd64
-        uses: skx/github-action-publish-binaries@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          args: 'bazel-bin/cmd/gotopt2/darwin_amd64_pure_stripped/gotopt2'
+          args: 'bazel-bin/cmd/gotopt2/gotopt_/gotopt2'
 
