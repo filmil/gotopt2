@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: "Test"
-        run: "bazel test --test_output=errors matrix.os //..."
+        run: "bazel test --test_output=errors //..."
       - name: "Build binaries for ${{ matrix.os }}_${{ matrix.arch }}"
         run: "bazel build --platforms=@io_bazel_rules_go//go/toolchain:${{ matrix.os }}_${{ matrix.arch}} //cmd/..."
       - name: "Publish ${{ matrix.os }}_${{ matrix.arch }}"
