@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: ["amd64"]
-        os: ["linux", "darwin"]
+        arch: ["386", "amd64"]
+        os: ["linux"]
     steps:
       - name: Setup bazel
         uses: abhinavsingh/setup-bazel@v3
@@ -17,11 +17,11 @@ jobs:
           version: 6.0.0
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Test
-        run: "bazel test //..."
-      - name: "Build binaries"
+      - name: "Test"
+        run: "bazel test --test_output=errors matrix.os //..."
+      - name: "Build binaries for ${{ matrix.os }}_${{ matrix.arch }}"
         run: "bazel build --platforms=@io_bazel_rules_go//go/toolchain:${{ matrix.os }}_${{ matrix.arch}} //cmd/..."
-      - name: Publish ${{ matrix.os }} ${{ matrix. arch }}
+      - name: "Publish ${{ matrix.os }}_${{ matrix.arch }}"
         uses: skx/github-action-publish-binaries@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
