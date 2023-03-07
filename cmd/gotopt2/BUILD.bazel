@@ -2,49 +2,46 @@ load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 load("@bazel_bats//:rules.bzl", "bats_test")
 
 go_library(
-    name = "go_default_library",
+    name = "gotopt2_lib",
     srcs = ["main.go"],
     importpath = "github.com/filmil/gotopt2/cmd/gotopt2",
     visibility = ["//visibility:private"],
-    deps = [
-        "//pkg/opts:go_default_library",
-        "@com_github_golang_glog//:go_default_library",
-    ],
+    deps = ["//pkg/opts"],
 )
 
 go_binary(
     name = "gotopt2",
-    embed = [":go_default_library"],
+    embed = [":gotopt2_lib"],
     visibility = ["//visibility:public"],
 )
 
 bats_test(
     name = "gotopt2_test",
-	srcs = ["gotopt2_test.bats"],
-	deps = [":gotopt2"],
-	env = {
+    srcs = ["gotopt2_test.bats"],
+    env = {
         # This is the local path to the gotopt binary in the sandbox. It is
         # not clear to me how to get the non-hardcoded path.
         "GOTOPT2": "./cmd/gotopt2/gotopt2_/gotopt2",
-	},
+    },
+    deps = [":gotopt2"],
 )
 
 sh_test(
     name = "gotopt_test_sh",
-	srcs = ["gotopt2_test.sh"],
-	data = [":gotopt2"],
-	args = [
+    srcs = ["gotopt2_test.sh"],
+    args = [
         "$(location :gotopt2)",
-		"--foo=bar",
+        "--foo=bar",
     ],
+    data = [":gotopt2"],
 )
 
 sh_test(
     name = "gotopt_help_test_sh",
-	srcs = ["gotopt2_help_test.sh"],
-	data = [":gotopt2"],
-	args = [
+    srcs = ["gotopt2_help_test.sh"],
+    args = [
         "$(location :gotopt2)",
-		"--help",
+        "--help",
     ],
+    data = [":gotopt2"],
 )

@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	yaml "gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v3"
 )
 
 // Config represents the option parsing configuration
@@ -156,7 +156,8 @@ func (s *StringListFlag) String() string {
 
 func config(r io.Reader) (Config, error) {
 	d := yaml.NewDecoder(r)
-	d.SetStrict(true)
+	// SetStrict is not supported in v3.
+	//d.SetStrict(true)
 	var (
 		c   Config
 		err error

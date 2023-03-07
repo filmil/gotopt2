@@ -1,6 +1,5 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
-
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
@@ -29,6 +28,13 @@ http_archive(
 
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
 
+go_repository(
+    name = "in_gopkg_yaml_v3",
+    importpath = "gopkg.in/yaml.v3",
+    sum = "h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=",
+    version = "v3.0.1",
+)
+
 gazelle_dependencies()
 
 go_repository(
@@ -40,13 +46,15 @@ go_repository(
 go_repository(
     name = "com_github_google_go_cmp",
     importpath = "github.com/google/go-cmp",
-    tag = "v0.2.0",
+    sum = "h1:+dTQ8DZQJz0Mb/HjFlkptS1FeQ4cWSnN941F8aEG4SQ=",
+    version = "v0.2.0",
 )
 
 go_repository(
     name = "in_gopkg_check_v1",
-    commit = "20d25e280405",
     importpath = "gopkg.in/check.v1",
+    sum = "h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=",
+    version = "v0.0.0-20161208181325-20d25e280405",
 )
 
 go_repository(
@@ -55,13 +63,12 @@ go_repository(
     tag = "v2.2.8",
 )
 
+BAZEL_BATS_COMMIT_ID = "e85b43efc90133d5cd4ca807a811e9aa4006fb49"
 git_repository(
     name = "bazel_bats",
     remote = "https://github.com/filmil/bazel-bats",
-	commit = "78da0822ea339bd0292b5cc0b5de6930d91b3254",
-	shallow_since = "1569564445 -0700",
+    commit = BAZEL_BATS_COMMIT_ID,
+    shallow_since = "1677540706 -0800",
 )
-
 load("@bazel_bats//:deps.bzl", "bazel_bats_dependencies")
 bazel_bats_dependencies()
-

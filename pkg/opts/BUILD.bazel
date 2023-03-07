@@ -1,19 +1,16 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
-    name = "go_default_library",
+    name = "opts",
     srcs = ["opts.go"],
     importpath = "github.com/filmil/gotopt2/pkg/opts",
     visibility = ["//visibility:public"],
-    deps = [
-        "@com_github_golang_glog//:go_default_library",
-        "@in_gopkg_yaml_v2//:go_default_library",
-    ],
+    deps = ["@in_gopkg_yaml_v3//:go_default_library"],
 )
 
 go_test(
-    name = "go_default_test",
+    name = "opts_test",
     srcs = ["opts_test.go"],
-    embed = [":go_default_library"],
-    deps = ["@com_github_google_go_cmp//cmp:go_default_library"],
+    embed = [":opts"],
+    deps = ["@com_github_google_go_cmp//cmp"],
 )
