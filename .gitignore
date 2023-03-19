@@ -13,3 +13,7 @@
 
 # Ignore bazel generated links.
 bazel-*
+
+# Ignore failed patches
+*.orig
+*.rej
