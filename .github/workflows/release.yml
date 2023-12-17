@@ -26,5 +26,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: 'bazel-bin/cmd/gotopt2/gotopt_/gotopt2'
+          args: 'bazel-bin/cmd/gotopt2/gotopt2_/gotopt2'
 
