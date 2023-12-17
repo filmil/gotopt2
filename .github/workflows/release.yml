@@ -22,9 +22,10 @@ jobs:
       - name: "Build binaries for ${{ matrix.os }}_${{ matrix.arch }}"
         run: "bazel build --platforms=@io_bazel_rules_go//go/toolchain:${{ matrix.os }}_${{ matrix.arch}} //cmd/..."
       - name: "Publish ${{ matrix.os }}_${{ matrix.arch }}"
-        uses: skx/github-action-publish-binaries@master
+        uses: ncipollo/release-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: 'bazel-bin/cmd/gotopt2/gotopt2_/gotopt2'
+          allowUpdates: true
+          artifacts: "bazel-bin/cmd/gotopt2/gotopt2_/gotopt2"
 
