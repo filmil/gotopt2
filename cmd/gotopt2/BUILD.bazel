@@ -1,5 +1,7 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 load("@bazel_bats//:rules.bzl", "bats_test")
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+load("@rules_pkg//pkg:zip.bzl", "pkg_zip")
+load("//build:my_package_name.bzl", "name_part_from_command_line")
 
 go_library(
     name = "gotopt2_lib",
@@ -45,3 +47,20 @@ sh_test(
     ],
     data = [":gotopt2"],
 )
+
+name_part_from_command_line(
+    name = "name_part_from_command_line",
+    build_setting_default = "@set_me@"
+)
+    
+
+pkg_zip(
+    name = "zip",
+    srcs = [
+        ":gotopt2",
+    ],
+    package_dir = "gotopt2",
+    package_file_name = "gotopt2-{name_part}.zip",
+    package_variables = ":name_part_from_command_line"
+)
+
