@@ -57,6 +57,15 @@ def gotopt2_dependencies():
         # and call them here. See below.
         bazel_bats_dependencies()
 
+        maybe(
+            http_archive,
+            name = "rules_pkg",
+            urls = [
+                "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.9.1/rules_pkg-0.9.1.tar.gz",
+                "https://github.com/bazelbuild/rules_pkg/releases/download/0.9.1/rules_pkg-0.9.1.tar.gz",
+            ],
+            sha256 = "8f9ee2dc10c1ae514ee599a8b42ed99fa262b757058f65ad3c384289ff70c4b8",
+        )
 
 # Expanded inline @bazel_bats//build:deps.bzl
 
@@ -198,3 +207,5 @@ def bazel_bats_dependencies(
                 "https://github.com/bats-core/bats-support/archive/refs/tags/v%s.tar.gz" % bats_support_version,
             ],
         )
+
+
