@@ -17,3 +17,5 @@ bazel-*
 # Ignore failed patches
 *.orig
 *.rej
+
+user.bazelrc

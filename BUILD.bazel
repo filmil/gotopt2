@@ -1,4 +1,10 @@
 load("@bazel_gazelle//:def.bzl", "gazelle")
+load("@buildifier_prebuilt//:rules.bzl", "buildifier")
 
 # gazelle:prefix github.com/filmil/gotopt2
 gazelle(name = "gazelle")
+
+# bazel run //:buildifier
+buildifier(
+    name = "buildifier",
+)
