@@ -20,6 +20,13 @@ jobs:
           version: 8.1.1
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: "~/.cache/bazel"
+          key: ${{ runner.os }}-bazel-${{ hashFiles('**/BUILD.bazel', '**/WORKSPACE') }}
+          restore-keys: |
+            ${{ runner.os }}-bazel-
       - name: Build
         run: "bazel build //..."
       - name: Test
