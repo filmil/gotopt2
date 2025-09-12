@@ -52,6 +52,7 @@ jobs:
             --transform='s,^,${{ env.REPO_NAME }}-${{ env.VERSION }}/,' \
             --exclude='.git' \
             --exclude='.github' \
+            --exclude='bazel-*' \
             .
       - name: "Publish source archive"
         uses: ncipollo/release-action@v1
