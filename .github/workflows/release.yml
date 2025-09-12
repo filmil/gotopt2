@@ -5,6 +5,7 @@ on:
 
 jobs:
   release:
+    needs: source-archive
     runs-on: ubuntu-latest
     strategy:
       matrix:
