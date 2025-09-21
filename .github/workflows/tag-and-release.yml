@@ -34,13 +34,6 @@ jobs:
           repository-cache: true
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Cache
-        uses: actions/cache@v4
-        with:
-          path: "~/.cache/bazel"
-          key: ${{ runner.os }}-bazel-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-bazel-
       - name: "Test"
         run: "bazel test --test_output=errors //..."
       - name: Bump version and push tag
@@ -91,13 +84,6 @@ jobs:
           repository-cache: true
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Cache
-        uses: actions/cache@v4
-        with:
-          path: "~/.cache/bazel"
-          key: ${{ runner.os }}-${{ matrix.arch }}-bazel-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.arch }}-bazel-
       - name: "Test"
         run: "bazel test --test_output=errors //..."
       - name: "Build binaries for ${{ matrix.os }}_${{ matrix.arch }}"
