@@ -1,6 +1,6 @@
 # `gotopt2`: a self-contained shell flags or options parser, written in go
 
-![Build Status](https://github.com/filmil/gotopt2/workflows/Release/badge.svg) | ![Build Status](https://github.com/filmil/gotopt2/workflows/Test/badge.svg)
+![publish](https://github.com/filmil/gotopt2/actions/workflows/publish.yml/badge.svg) | ![release](https://github.com/filmil/gotopt2/actions/workflows/release.yml/badge.svg) | ![tag-and-release](https://github.com/filmil/gotopt2/actions/workflows/tag-and-release.yml/badge.svg) | ![test](https://github.com/filmil/gotopt2/actions/workflows/test.yml/badge.svg)
 
 `gotopt2` is a program that outputs its command line arguments as a snippet of
 shell script that can be readily evaluated.
