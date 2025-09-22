@@ -1,6 +1,6 @@
 # `gotopt2`: a self-contained shell flags or options parser, written in go
 
-![Publish to my Bazel registry](https://github.com/filmil/gotopt2/actions/workflows/publish.yml/badge.svg) | ![Release](https://github.com/filmil/gotopt2/actions/workflows/release.yml/badge.svg) | ![Tag and Release](https://github.com/filmil/gotopt2/actions/workflows/tag-and-release.yml/badge.svg) | ![Test](https://github.com/filmil/gotopt2/actions/workflows/test.yml/badge.svg)
+![Publish on Bazel Central Registry](https://github.com/filmil/gotopt2/actions/workflows/publish-bcr.yml/badge.svg) | ![Publish to my Bazel registry](https://github.com/filmil/gotopt2/actions/workflows/publish.yml/badge.svg) | ![Release](https://github.com/filmil/gotopt2/actions/workflows/release.yml/badge.svg) | ![Tag and Release](https://github.com/filmil/gotopt2/actions/workflows/tag-and-release.yml/badge.svg) | ![Test](https://github.com/filmil/gotopt2/actions/workflows/test.yml/badge.svg)
 
 `gotopt2` is a program that outputs its command line arguments as a snippet of
 shell script that can be readily evaluated.
