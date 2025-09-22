@@ -1,0 +1,20 @@
+load("@gotopt2//build:macros.bzl", "run_gotopt2_sample")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+run_gotopt2_sample(
+    name = "example",
+)
+
+# Verifies that the above target `:example` returned something in a file, which
+# should only happen if we can use the `gotopt2` binary.
+sh_test(
+    name = "example_test",
+    srcs = [ "test.sh" ],
+    args = [
+        "$(location :example)",
+    ],
+    data = [
+        ":example",
+    ],
+)
+
