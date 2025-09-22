@@ -8,3 +8,6 @@ local_path_override(
     module_name = "gotopt2",
     path = "../",
 )
+
+# rules_shell
+bazel_dep(name = "rules_shell", version = "0.6.1")
