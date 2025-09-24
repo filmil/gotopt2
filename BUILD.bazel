@@ -8,3 +8,8 @@ gazelle(name = "gazelle")
 buildifier(
     name = "buildifier",
 )
+
+alias(
+    name = "bin",
+    actual = "@multitool//tools/gotopt2",
+)
