@@ -12,4 +12,5 @@ buildifier(
 alias(
     name = "bin",
     actual = "@multitool//tools/gotopt2",
+    visibility = [ "//visibility:public" ],
 )
