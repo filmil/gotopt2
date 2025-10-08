@@ -156,8 +156,8 @@ func (s *StringListFlag) String() string {
 
 func config(r io.Reader) (Config, error) {
 	d := yaml.NewDecoder(r)
-	// SetStrict is not supported in v3.
-	//d.SetStrict(true)
+	// In yaml.v3, KnownFields is used for strict parsing.
+	d.KnownFields(true)
 	var (
 		c   Config
 		err error
@@ -197,7 +197,7 @@ func flagSet(c Config) (*flag.FlagSet, error) {
 	return fs, nil
 }
 
-func declLine(name, value, falseVal, prefix, decl string, toUpper, quote bool) string {
+func declLine(name, value, prefix, decl string, toUpper, quote bool) string {
 	r := strings.NewReplacer("-", "_")
 	name = r.Replace(name)
 	fullVarName := fmt.Sprintf("%vgotopt2_%v", prefix, name)
@@ -220,28 +220,35 @@ func wrFlags(fs *flag.FlagSet, falseVal string, toUpper bool,
 	var out []string
 	fs.VisitAll(func(f *flag.Flag) {
 		var v string
+		quote := true
+		name := f.Name
+
+		// Check if the flag is a boolean flag.
 		type isbooler interface {
 			IsBoolFlag() bool
 		}
-		if _, ok := f.Value.(isbooler); !ok || f.Value.String() != "false" {
+		if b, ok := f.Value.(isbooler); ok && b.IsBoolFlag() {
+			if f.Value.String() == "false" {
+				v = falseVal
+			} else {
+				v = f.Value.String()
+			}
+		} else if _, ok := f.Value.(*StringListFlag); ok {
+			// Special handling for StringListFlag
+			name = fmt.Sprintf("%v__list", name)
+			v = f.Value.String()
+			quote = false
+		} else {
 			v = f.Value.String()
 		}
-		if v == "" {
-			v = falseVal
-		}
-		name := f.Name
-		quote := true
-		if _, ok := f.Value.(*StringListFlag); ok {
-			name = fmt.Sprintf("%v__list", name)
-			quote = false
-		}
-		dl := declLine(name, v, falseVal, prefix, decl, toUpper, quote)
+
+		dl := declLine(name, v, prefix, decl, toUpper, quote)
 		out = append(out, fmt.Sprintf("%s\n", dl))
 	})
 	// Ensure that the output is stable.
 	sort.Strings(out)
 	for _, s := range out {
-		fmt.Fprintf(w, s)
+		fmt.Fprint(w, s)
 	}
 }
 
@@ -255,6 +262,6 @@ func wrArgs(args []string, fs *flag.FlagSet, prefix, decl string, toUpper bool, 
 		a = append(a, fmt.Sprintf("%q", arg))
 	}
 	allArgs := strings.Join(a, " ")
-	dl := declLine("args__", fmt.Sprintf("(%s)", allArgs), "()", prefix, decl, toUpper, false)
+	dl := declLine("args__", fmt.Sprintf("(%s)", allArgs), prefix, decl, toUpper, false)
 	fmt.Fprintf(w, "%s\n", dl)
 }
