@@ -5,26 +5,30 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/filmil/gotopt2/pkg/opts"
 )
 
 func main() {
-	go func() {
-		// This goroutine will not run if the program exits before the
-		// pause expires.
-		const pause = 10
-		<-time.After(pause * time.Second)
-		fmt.Fprintf(os.Stderr, "gotopt2: %v seconds passed, did you forget to pass config as stdin?\n", pause)
+	stat, err := os.Stdin.Stat()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error reading from stdin: %v\n", err)
+		os.Exit(142)
+	}
+	// If stdin is a TTY, it means no input is being piped, and we should
+	// exit with a helpful error message.
+	if (stat.Mode() & os.ModeCharDevice) != 0 {
+		fmt.Fprintln(os.Stderr, "gotopt2: configuration must be passed via stdin")
 		os.Exit(12)
-	}()
+	}
+
 	if err := opts.Run(os.Stdin, os.Args[1:], os.Stdout); err != nil {
 		if err == flag.ErrHelp {
 			// flag.ErrHelp means that the flag parser has written out the
 			// usage.
 			os.Exit(11)
 		}
+		fmt.Fprintf(os.Stderr, "gotopt2: %v\n", err)
 		os.Exit(142)
 	}
 }

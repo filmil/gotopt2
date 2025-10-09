@@ -230,6 +230,31 @@ gotopt2_args__=("file1" "file2")
 `,
 		},
 		{
+			name: "Strict YAML parsing",
+			args: []string{},
+			input: `
+flags:
+- name: "foo"
+  type: string
+unknown_field: "some value"
+`,
+			wantError: fmt.Errorf("field unknown_field not found"),
+		},
+		{
+			name: "Empty string flag with falseValue set",
+			args: []string{"-foo="},
+			input: `
+falseValue: "was_false"
+flags:
+- name: "foo"
+  type: string
+`,
+			expected: `# gotopt2:generated:begin
+gotopt2_foo=""
+# gotopt2:generated:end
+`,
+		},
+		{
 			name: "One of each",
 			args: []string{
 				"--strarg", "foo",
