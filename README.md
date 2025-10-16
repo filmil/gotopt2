@@ -240,7 +240,7 @@ Nothing, if it fulfills your use case.
 It's reimplementing `getopt`.  I don't see why one would want to do that
 given the opportunity to implement a user-friendlier approach.
 
-## What's wrong with argbash (https://argbash.io)?
+## What's wrong with https://argbash.dev?
 
 Nothing, if it fulfills your use case.
 
