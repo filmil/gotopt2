@@ -31,9 +31,9 @@ flags:
   default: "value"
 `,
 			expected: `# gotopt2:generated:begin
-gotopt2_baz="value"
-gotopt2_foo="bar"
-gotopt2_args__=("arg")
+gotopt2_baz='value'
+gotopt2_foo='bar'
+gotopt2_args__=('arg')
 # gotopt2:generated:end
 `,
 		},
@@ -57,8 +57,8 @@ flags:
   type: stringlist
 `,
 			expected: `# gotopt2:generated:begin
-gotopt2_foo__list=("bar" "baz" "bat")
-gotopt2_args__=("arg")
+gotopt2_foo__list=('bar' 'baz' 'bat')
+gotopt2_args__=('arg')
 # gotopt2:generated:end
 `,
 		},
@@ -88,8 +88,8 @@ flags:
   type: string
 `,
 			expected: `# gotopt2:generated:begin
-some_declaration gotopt2_foo="bar"
-some_declaration gotopt2_args__=("arg")
+some_declaration gotopt2_foo='bar'
+some_declaration gotopt2_args__=('arg')
 # gotopt2:generated:end
 `,
 		},
@@ -104,8 +104,8 @@ flags:
   type: string
 `,
 			expected: `# gotopt2:generated:begin
-some_prefix_gotopt2_foo="bar"
-some_prefix_gotopt2_args__=("arg")
+some_prefix_gotopt2_foo='bar'
+some_prefix_gotopt2_args__=('arg')
 # gotopt2:generated:end
 `,
 		},
@@ -124,9 +124,9 @@ flags:
   default: "value"
 `,
 			expected: `# gotopt2:generated:begin
-GOTOPT2_BAZ="value"
-GOTOPT2_FOO="bar"
-GOTOPT2_ARGS__=("arg")
+GOTOPT2_BAZ='value'
+GOTOPT2_FOO='bar'
+GOTOPT2_ARGS__=('arg')
 # gotopt2:generated:end
 `,
 		},
@@ -152,7 +152,7 @@ flags:
   type: bool
 `,
 			expected: `# gotopt2:generated:begin
-gotopt2_foo="true"
+gotopt2_foo='true'
 # gotopt2:generated:end
 `,
 		},
@@ -166,7 +166,7 @@ flags:
   type: bool
 `,
 			expected: `# gotopt2:generated:begin
-gotopt2_foo_bar="true"
+gotopt2_foo_bar='true'
 # gotopt2:generated:end
 `,
 		},
@@ -180,8 +180,8 @@ flags:
   type: bool
 `,
 			expected: `# gotopt2:generated:begin
-gotopt2_foo=""
-gotopt2_args__=("--foo")
+gotopt2_foo=''
+gotopt2_args__=('--foo')
 # gotopt2:generated:end
 `,
 		},
@@ -195,7 +195,7 @@ flags:
   type: bool
 `,
 			expected: `# gotopt2:generated:begin
-gotopt2_foo=""
+gotopt2_foo=''
 # gotopt2:generated:end
 `,
 		},
@@ -210,7 +210,7 @@ flags:
   type: bool
 `,
 			expected: `# gotopt2:generated:begin
-gotopt2_foo="false"
+gotopt2_foo='false'
 # gotopt2:generated:end
 `,
 		},
@@ -224,8 +224,8 @@ flags:
   type: bool
 `,
 			expected: `# gotopt2:generated:begin
-gotopt2_foo="true"
-gotopt2_args__=("file1" "file2")
+gotopt2_foo='true'
+gotopt2_args__=('file1' 'file2')
 # gotopt2:generated:end
 `,
 		},
@@ -251,11 +251,25 @@ flags:
   type: bool
 `,
 			expected: `# gotopt2:generated:begin
-gotopt2_boolarg="true"
-gotopt2_intarg="10"
-gotopt2_strarg2="bar"
-gotopt2_strarg="foo"
-gotopt2_args__=("param1" "param2")
+gotopt2_boolarg='true'
+gotopt2_intarg='10'
+gotopt2_strarg2='bar'
+gotopt2_strarg='foo'
+gotopt2_args__=('param1' 'param2')
+# gotopt2:generated:end
+`,
+		},
+		{
+			name: "Command Injection",
+			args: []string{"--strarg", "$(echo hacked)", "`rm -rf /`", "a'b"},
+			input: `
+flags:
+- name: "strarg"
+  type: string
+`,
+			expected: `# gotopt2:generated:begin
+gotopt2_strarg='$(echo hacked)'
+gotopt2_args__=('` + "`" + `rm -rf /` + "`" + `' 'a'"'"'b')
 # gotopt2:generated:end
 `,
 		},
