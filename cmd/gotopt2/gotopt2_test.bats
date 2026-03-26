@@ -19,7 +19,7 @@ flags:
 EOF
 )
   expected=$'# gotopt2:generated:begin
-gotopt2_foo=\"bar\"
+gotopt2_foo=\'bar\'
 # gotopt2:generated:end'
   [ "${result}" == "${expected}" ]
 }
@@ -58,7 +58,7 @@ EOF
   echo "${lines[2]}"
   [ "${status}" -eq 0 ]
   [ "${lines[0]}" == "# gotopt2:generated:begin" ]
-  [ "${lines[1]}" == "gotopt2_list__list=(\"eenie\" \"meenie\" \"minie\" \"moe\")" ]
+  [ "${lines[1]}" == "gotopt2_list__list=('eenie' 'meenie' 'minie' 'moe')" ]
   [ "${lines[2]}" == "# gotopt2:generated:end" ]
   [ "${#lines[@]}" -eq 3 ]
 }
