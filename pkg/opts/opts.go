@@ -241,7 +241,7 @@ func wrFlags(fs *flag.FlagSet, falseVal string, toUpper bool,
 	// Ensure that the output is stable.
 	sort.Strings(out)
 	for _, s := range out {
-		fmt.Fprintf(w, s)
+		fmt.Fprint(w, s)
 	}
 }
 
