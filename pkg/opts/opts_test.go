@@ -273,6 +273,21 @@ gotopt2_args__=('` + "`" + `rm -rf /` + "`" + `' 'a'"'"'b')
 # gotopt2:generated:end
 `,
 		},
+		{
+			name: "Malicious flag name, prefix, and declaration",
+			args: []string{"-a=1"},
+			input: `
+prefix: "p; echo HACKED_PREFIX; "
+declaration: "d; echo HACKED_DECL; "
+flags:
+- name: "a; echo HACKED_NAME; "
+  type: string
+`,
+			expected: `# gotopt2:generated:begin
+d__echo_HACKED_DECL__ p__echo_HACKED_PREFIX__gotopt2_a__echo_HACKED_NAME__='1'
+# gotopt2:generated:end
+`,
+		},
 	}
 	for _, test := range tests {
 		test := test
