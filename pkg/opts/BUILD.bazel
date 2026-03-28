@@ -5,7 +5,7 @@ go_library(
     srcs = ["opts.go"],
     importpath = "github.com/filmil/gotopt2/pkg/opts",
     visibility = ["//visibility:public"],
-    deps = ["@in_gopkg_yaml_v3//:go_default_library"],
+    deps = ["@in_gopkg_yaml_v3//:yaml_v3"],
 )
 
 go_test(

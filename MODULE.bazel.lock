@@ -316,7 +316,7 @@
   "moduleExtensions": {
     "@@bazel_bats+//:extensions.bzl%bazel_bats_deps": {
       "general": {
-        "bzlTransitiveDigest": "T2P3qHOgZ09qyacxD/Xs0r2MTrGsJjQ0AzSh2J/WlXw=",
+        "bzlTransitiveDigest": "JKBE/jUTRiWkediih9MYEUJaC8cmHo1xY4+8OzQf2W4=",
         "usagesDigest": "t+ex/oJhALiD6nk6VMpJT83/RVXO6TaIVwWMSo4V6sA=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
