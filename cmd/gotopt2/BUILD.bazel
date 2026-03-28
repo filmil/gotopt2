@@ -1,7 +1,7 @@
-load("//build:my_package_name.bzl", "name_part_from_command_line")
 load("@bazel_bats//:rules.bzl", "bats_test")
-load("@rules_go//go:def.bzl", "go_binary", "go_library")
+load("@rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
 load("@rules_pkg//pkg:zip.bzl", "pkg_zip")
+load("//build:my_package_name.bzl", "name_part_from_command_line")
 
 go_library(
     name = "gotopt2_lib",
@@ -9,6 +9,12 @@ go_library(
     importpath = "github.com/filmil/gotopt2/cmd/gotopt2",
     visibility = ["//visibility:private"],
     deps = ["//pkg/opts"],
+)
+
+go_test(
+    name = "gotopt2_lib_test",
+    srcs = ["main_test.go"],
+    embed = [":gotopt2_lib"],
 )
 
 go_binary(

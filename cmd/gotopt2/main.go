@@ -22,7 +22,7 @@ func main() {
 	if err := opts.Run(os.Stdin, os.Args[1:], os.Stdout); err != nil {
 		if err == flag.ErrHelp {
 			// flag.ErrHelp means that the flag parser has written out the
-			// usage.
+			// usage. We exit with code 11 to signal help (fixes issue #11).
 			os.Exit(11)
 		}
 		os.Exit(142)
