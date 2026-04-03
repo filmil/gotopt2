@@ -202,9 +202,20 @@ func shellQuote(s string) string {
 	return "'" + strings.ReplaceAll(s, "'", "'\"'\"'") + "'"
 }
 
+// sanitize replaces any character that is not alphanumeric or underscore with an underscore.
+func sanitize(s string) string {
+	return strings.Map(func(r rune) rune {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_' {
+			return r
+		}
+		return '_'
+	}, s)
+}
+
 func declLine(name, value, falseVal, prefix, decl string, toUpper, quote bool) string {
-	r := strings.NewReplacer("-", "_")
-	name = r.Replace(name)
+	name = sanitize(name)
+	prefix = sanitize(prefix)
+	decl = sanitize(decl)
 	fullVarName := fmt.Sprintf("%vgotopt2_%v", prefix, name)
 	if toUpper {
 		fullVarName = strings.ToUpper(fullVarName)
