@@ -255,7 +255,7 @@ func wrArgs(args []string, fs *flag.FlagSet, prefix, decl string, toUpper bool, 
 	if fs.NArg() == 0 {
 		return
 	}
-	var a []string
+	a := make([]string, 0, fs.NArg())
 	for _, arg := range fs.Args() {
 		a = append(a, shellQuote(arg))
 	}
