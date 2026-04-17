@@ -273,6 +273,16 @@ gotopt2_args__=('` + "`" + `rm -rf /` + "`" + `' 'a'"'"'b')
 # gotopt2:generated:end
 `,
 		},
+		{
+			name: "Invalid FType Unmarshal",
+			args: []string{},
+			input: `
+flags:
+- name: "foo"
+  type: ["invalid_array"]
+`,
+			wantError: fmt.Errorf("not a string:"),
+		},
 	}
 	for _, test := range tests {
 		test := test
