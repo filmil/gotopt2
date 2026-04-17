@@ -1,0 +1,19 @@
+--- pkg/opts/opts_test.go
++++ pkg/opts/opts_test.go
+@@ -4,6 +4,7 @@
+	"flag"
+	"fmt"
+	"strings"
++	"errors"
+	"testing"
+
+	"github.com/google/go-cmp/cmp"
+@@ -282,7 +283,7 @@
+   type: int
+   default: "abc"
+ `,
+-			wantError: fmt.Errorf("flag: \"abc\":"),
++			wantError: errors.New("flag: \"abc\":"),
+		},
+	}
+	for _, test := range tests {

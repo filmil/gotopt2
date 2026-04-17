@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"strings"
+	"errors"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -272,6 +273,17 @@ gotopt2_strarg='$(echo hacked)'
 gotopt2_args__=('` + "`" + `rm -rf /` + "`" + `' 'a'"'"'b')
 # gotopt2:generated:end
 `,
+		},
+		{
+			name: "Int parsing error",
+			args: []string{},
+			input: `
+flags:
+- name: "intarg"
+  type: int
+  default: "abc"
+`,
+			wantError: errors.New("flag: \"abc\":"),
 		},
 	}
 	for _, test := range tests {
