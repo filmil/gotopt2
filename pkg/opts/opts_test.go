@@ -284,6 +284,17 @@ flags:
 `,
 			wantError: fmt.Errorf("not a string:"),
 		},
+		{
+			name: "Int parsing error",
+			args: []string{},
+			input: `
+flags:
+- name: "intarg"
+  type: int
+  default: "abc"
+`,
+			wantError: errors.New("flag: \"abc\":"),
+		},
 	}
 	for _, test := range tests {
 		test := test
