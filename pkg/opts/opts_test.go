@@ -274,14 +274,19 @@ gotopt2_args__=('` + "`" + `rm -rf /` + "`" + `' 'a'"'"'b')
 `,
 		},
 		{
-			name: "Invalid FType Unmarshal",
-			args: []string{},
+			name: "Malicious flag name, prefix, and declaration",
+			args: []string{"-a=1"},
 			input: `
+prefix: "p;echo HACKED_PREFIX;"
+declaration: "d;echo HACKED_DECL;"
 flags:
-- name: "foo"
-  type: ["invalid_array"]
+- name: "a"
+  type: string
 `,
-			wantError: fmt.Errorf("not a string:"),
+			expected: `# gotopt2:generated:begin
+d_echo_HACKED_DECL_ p_echo_HACKED_PREFIX_gotopt2_a='1'
+# gotopt2:generated:end
+`,
 		},
 	}
 	for _, test := range tests {
