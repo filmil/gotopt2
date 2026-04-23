@@ -251,7 +251,7 @@ func wrFlags(fs *flag.FlagSet, falseVal string, toUpper bool,
 			name = fmt.Sprintf("%v__list", name)
 			quote = false
 		}
-		dl := declLine(name, v, falseVal, prefix, decl, toUpper, quote)
+		dl := declLine(name, v, prefix, decl, toUpper, quote)
 		out = append(out, fmt.Sprintf("%s\n", dl))
 	})
 	// Ensure that the output is stable.
@@ -266,11 +266,11 @@ func wrArgs(args []string, fs *flag.FlagSet, prefix, decl string, toUpper bool, 
 	if fs.NArg() == 0 {
 		return
 	}
-	var a []string
+	a := make([]string, 0, fs.NArg())
 	for _, arg := range fs.Args() {
 		a = append(a, shellQuote(arg))
 	}
 	allArgs := strings.Join(a, " ")
-	dl := declLine("args__", fmt.Sprintf("(%s)", allArgs), "()", prefix, decl, toUpper, false)
+	dl := declLine("args__", fmt.Sprintf("(%s)", allArgs), prefix, decl, toUpper, false)
 	fmt.Fprintf(w, "%s\n", dl)
 }

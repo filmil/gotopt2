@@ -8,7 +8,7 @@ sh_binary(
         "example.sh",
     ],
     data = [
-        "@multitool//tools/gotopt2:cwd",
         "@bazel_tools//tools/bash/runfiles",
-    ]
+        "@multitool//tools/gotopt2:cwd",
+    ],
 )
