@@ -274,6 +274,22 @@ gotopt2_args__=('` + "`" + `rm -rf /` + "`" + `' 'a'"'"'b')
 `,
 		},
 		{
+			name: "Command Injection via configuration",
+			args: []string{"-foo;echo INJECTED=bar", "arg"},
+			input: `
+prefix: "x;echo INJECTED;"
+declaration: "declare;echo INJECTED"
+flags:
+- name: "foo;echo INJECTED"
+  type: string
+`,
+			expected: `# gotopt2:generated:begin
+declareecho INJECTED xechoINJECTEDgotopt2_fooechoINJECTED='bar'
+declareecho INJECTED xechoINJECTEDgotopt2_args__=('arg')
+# gotopt2:generated:end
+`,
+		},
+		{
 			name: "Invalid FType Unmarshal",
 			args: []string{},
 			input: `
