@@ -24,7 +24,7 @@ parse_args() {
 {{- range .Flags }}
   {{- if eq .Type 3 }}
       --{{ .Name }})
-        {{ .ActualVarName }}="true"
+        {{ .ActualVarName }}="{{ .TrueValue }}"
         shift
         ;;
   {{- else if eq .Type 4 }}

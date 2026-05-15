@@ -89,4 +89,12 @@ flags:
 '
 run_test "Help" "$CONFIG_3" "--help"
 
+CONFIG_4='
+trueValue: "on"
+flags:
+- name: "mybool"
+  type: bool
+'
+run_test "TrueValue" "$CONFIG_4" "--mybool"
+
 echo "All tests passed."
