@@ -37,3 +37,25 @@ sh_test(
         ":example_parser",
     ],
 )
+
+
+load("@rules_shell//shell:sh_library.bzl", "sh_library")
+
+sh_library(
+    name = "example_parser_lib",
+    srcs = ["example_parser.sh"],
+)
+
+sh_test(
+    name = "my_script_test",
+    srcs = ["my_script_test.sh"],
+    args = [
+        "$(location my_script.sh)",
+        "$(location :example_parser)",
+    ],
+    data = [
+        "my_script.sh",
+        ":example_parser_lib",
+        ":example_parser",
+    ],
+)
