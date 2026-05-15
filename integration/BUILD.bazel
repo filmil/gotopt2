@@ -18,3 +18,22 @@ sh_test(
     ],
 )
 
+
+load("@gotopt2//build:gotopt2.bzl", "gotopt2_generate_bash")
+
+gotopt2_generate_bash(
+    name = "example_parser",
+    src = "example.yaml",
+    out = "example_parser.sh",
+)
+
+sh_test(
+    name = "example_parser_test",
+    srcs = [ "test.sh" ],
+    args = [
+        "$(location :example_parser)",
+    ],
+    data = [
+        ":example_parser",
+    ],
+)
