@@ -29,6 +29,8 @@ type Config struct {
 	// Declaration is the default declaration word to use.  For example
 	// "readonly" or "local".
 	Declaration string `yaml:"declaration"`
+	// ProgramName is the name of the program to be displayed in help.
+	ProgramName string `yaml:"programName"`
 }
 
 // FType is the type of the flag variable
@@ -169,7 +171,7 @@ func config(r io.Reader) (Config, error) {
 }
 
 func flagSet(c Config) (*flag.FlagSet, error) {
-	fs := flag.NewFlagSet("", flag.ContinueOnError)
+	fs := flag.NewFlagSet(c.ProgramName, flag.ContinueOnError)
 	for _, f := range c.Flags {
 		switch f.Type {
 		case FTString:

@@ -44,6 +44,27 @@ EOF
   [ "${#lines[@]}" -eq 4 ]
 }
 
+@test "Usage printing with programName" {
+  run "${GOTOPT2}" --unknown <<EOF
+programName: "myprog"
+flags:
+- name: "foo"
+  type: string
+  default: "nothing"
+  help: "This is some flag value."
+EOF
+  echo "${status}"
+  echo "${lines[0]}"
+  echo "${lines[1]}"
+  echo "${lines[2]}"
+  echo "${lines[3]}"
+  [ "${status}" -eq 142 ] # The exit code is randomly set to 142
+  [ "${lines[0]}" == "flag provided but not defined: -unknown" ]
+  [ "${lines[1]}" == "Usage of myprog:" ]
+  [ "${lines[2]}" == "  -foo string" ]
+  [ "${#lines[@]}" -eq 4 ]
+}
+
 @test "Stringlist printing" {
   run "${GOTOPT2}" --list=eenie,meenie,minie,moe <<EOF
 flags:
