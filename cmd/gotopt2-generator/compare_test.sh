@@ -89,4 +89,13 @@ flags:
 '
 run_test "Help" "$CONFIG_3" "--help"
 
+CONFIG_4='
+programName: "my_cool_prog"
+flags:
+- name: "foo"
+  type: string
+  help: "Foo configuration"
+'
+run_test "HelpProgramName" "$CONFIG_4" "--help"
+
 echo "All tests passed."
