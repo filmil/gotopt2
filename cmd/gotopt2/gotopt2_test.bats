@@ -79,3 +79,21 @@ EOF
   [ "${lines[1]}" == "  -list value" ]
 }
 
+@test "TrueValue config" {
+  run "${GOTOPT2}" --mybool <<EOF
+trueValue: "on"
+flags:
+- name: "mybool"
+  type: bool
+  help: ""
+EOF
+  echo "${status}"
+  echo "${lines[0]}"
+  echo "${lines[1]}"
+  echo "${lines[2]}"
+  [ "${status}" -eq 0 ]
+  [ "${lines[0]}" == "# gotopt2:generated:begin" ]
+  [ "${lines[1]}" == "gotopt2_mybool='on'" ]
+  [ "${lines[2]}" == "# gotopt2:generated:end" ]
+  [ "${#lines[@]}" -eq 3 ]
+}

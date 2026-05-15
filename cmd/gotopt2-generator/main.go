@@ -39,6 +39,7 @@ type TemplateFlag struct {
 	Type          opts.FType
 	ActualVarName string
 	DefaultValue  string
+	TrueValue     string
 	Help          string
 }
 
@@ -64,11 +65,20 @@ func generateBash(c opts.Config, w io.Writer) error {
 
 	var outputs []string
 
+	trueVal := c.TrueValue
+	if trueVal == "" {
+		trueVal = "true"
+	}
+
 	for _, f := range c.Flags {
 		actualVarName := varName(f.Name, c.Prefix, c.AllCaps)
 		def := f.RawDefault
-		if f.Type == opts.FTBool && def == "" {
-			def = c.FalseValue
+		if f.Type == opts.FTBool {
+			if def == "" || def == "false" {
+				def = c.FalseValue
+			} else if def == "true" {
+				def = trueVal
+			}
 		}
 
 		data.Flags = append(data.Flags, TemplateFlag{
@@ -76,6 +86,7 @@ func generateBash(c opts.Config, w io.Writer) error {
 			Type:          f.Type,
 			ActualVarName: actualVarName,
 			DefaultValue:  def,
+			TrueValue:     trueVal,
 			Help:          f.Help,
 		})
 		varNameStr := f.Name
