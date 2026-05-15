@@ -16,5 +16,4 @@ bazel_dep(name = "rules_shell", version = "0.6.1")
 bazel_dep(name = "rules_multitool", version = "1.11.1")
 
 multitool = use_extension("@rules_multitool//multitool:extension.bzl", "multitool")
-multitool.hub(lockfile = "@gotopt2//:multitool.lock.json")
 use_repo(multitool, "multitool")
