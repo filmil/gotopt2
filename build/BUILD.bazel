@@ -1,6 +1,14 @@
 load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
+load("@bazel_lib//:bzl_library.bzl", "bzl_library")
+load("@stardoc//stardoc:stardoc.bzl", "stardoc")
 
 package(default_visibility = ["//visibility:public"])
+
+exports_files([
+    "gotopt2.md",
+    "macros.md",
+    "my_package_name.md",
+])
 
 sh_binary(
     name = "example",
@@ -11,4 +19,59 @@ sh_binary(
         "@bazel_tools//tools/bash/runfiles",
         "@multitool//tools/gotopt2:cwd",
     ],
+)
+
+bzl_library(
+    name = "gotopt2",
+    srcs = ["gotopt2.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "macros",
+    srcs = ["macros.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "my_package_name",
+    deps = [":rules_pkg_providers_bzl"],
+    srcs = ["my_package_name.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+stardoc(
+    name = "gotopt2_md",
+    out = "gen.gotopt2.md",
+    input = "gotopt2.bzl",
+)
+
+stardoc(
+    name = "macros_md",
+    out = "gen.macros.md",
+    input = "macros.bzl",
+)
+
+stardoc(
+    name = "my_package_name_md",
+    out = "gen.my_package_name.md",
+    input = "my_package_name.bzl",
+    deps = [":my_package_name", ":rules_pkg_providers_bzl"],
+)
+
+bzl_library(
+    name = "rules_pkg_providers_bzl",
+    srcs = ["@rules_pkg//pkg:providers.bzl"],
+    visibility = ["//visibility:public"],
+)
+
+load("@bazel_lib//lib:write_source_files.bzl", "write_source_files")
+
+write_source_files(
+    name = "update",
+    files = {
+        "gotopt2.md": ":gotopt2_md",
+        "macros.md": ":macros_md",
+        "my_package_name.md": ":my_package_name_md",
+    },
 )

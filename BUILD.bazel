@@ -1,8 +1,18 @@
-load("@bazel_gazelle//:def.bzl", "gazelle")
+load("@bazel_gazelle//:def.bzl", "DEFAULT_LANGUAGES", "gazelle", "gazelle_binary")
 load("@buildifier_prebuilt//:rules.bzl", "buildifier")
 
 # gazelle:prefix github.com/filmil/gotopt2
-gazelle(name = "gazelle")
+gazelle(
+    name = "gazelle",
+    gazelle = ":gazelle_bin",
+)
+
+gazelle_binary(
+    name = "gazelle_bin",
+    languages = DEFAULT_LANGUAGES + [
+        "@bazel_skylib_gazelle_plugin//bzl",
+    ],
+)
 
 # bazel run //:buildifier
 buildifier(
@@ -14,3 +24,10 @@ alias(
     actual = "@multitool//tools/gotopt2",
     visibility = ["//visibility:public"],
 )
+
+
+
+
+
+
+
