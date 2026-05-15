@@ -13,13 +13,13 @@ jobs:
         arch: ["amd64", "arm64"]
     steps:
       - name: Setup bazel
-        uses: bazel-contrib/setup-bazel@0.15.0
+        uses: bazel-contrib/setup-bazel@0.19.0
         with:
           bazelisk-cache: true
           disk-cache: ${{ github.workflow }}
           repository-cache: true
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
       - name: Cache
         uses: actions/cache@v4
         with:
@@ -32,7 +32,7 @@ jobs:
       - name: "Build binaries for ${{ matrix.os }}_${{ matrix.arch }}"
         run: "bazel build --platforms=@io_bazel_rules_go//go/toolchain:${{ matrix.os }}_${{ matrix.arch}} --//cmd/gotopt2:name_part_from_command_line=${{ matrix.os }}-${{ matrix.arch }} //cmd/gotopt2:zip //cmd/gotopt2-generator:zip"
       - name: "Publish ${{ matrix.os }}_${{ matrix.arch }}"
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v1.21.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
       - name: Get release tag
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
@@ -50,13 +50,13 @@ jobs:
         id: get_repo_name
         run: echo "REPO_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
       - name: Archive Release
-        uses: thedoctor0/zip-release@0.7.5
+        uses: thedoctor0/zip-release@0.7.6
         with:
           type: 'zip'
           filename: "${{ env.REPO_NAME }}-${{ env.VERSION }}.zip"
           exclusions: '*.git* /*node_modules/* .editorconfig'
       - name: "Publish source archive"
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v1.21.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
