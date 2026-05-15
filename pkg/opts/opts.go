@@ -22,6 +22,9 @@ type Config struct {
 	// that text to be "false", or "off" or some such.  Note that this does not
 	// affect the way the user can specify the flag.
 	FalseValue string `yaml:"falseValue"`
+	// TrueValue is the value to generate for a true-valued Boolean variable.
+	// It is "true" by default.
+	TrueValue string `yaml:"trueValue"`
 	// AllCaps causes the variable name to be rendered in ALL_CAPS.
 	AllCaps bool `yaml:"ALL_CAPS"`
 	// Prefix is prepended to the full variable name.
@@ -93,7 +96,7 @@ func Run(r io.Reader, args []string, w io.Writer) error {
 	}
 
 	fmt.Fprintf(w, "# gotopt2:generated:begin\n")
-	wrFlags(fs, c.FalseValue, c.AllCaps, c.Prefix, c.Declaration, w)
+	wrFlags(fs, c.FalseValue, c.TrueValue, c.AllCaps, c.Prefix, c.Declaration, w)
 	wrArgs(args, fs, c.Prefix, c.Declaration, c.AllCaps, w)
 	fmt.Fprintf(w, "# gotopt2:generated:end\n")
 	return nil
@@ -164,6 +167,7 @@ func config(r io.Reader) (Config, error) {
 		c   Config
 		err error
 	)
+	c.TrueValue = "true"
 	if err = d.Decode(&c); err != nil {
 		return c, fmt.Errorf("while decoding configuration: %v", err)
 	}
@@ -244,7 +248,7 @@ func declLine(name, value, prefix, decl string, toUpper, quote bool) string {
 	return strings.Join([]string{decl, assignment}, " ")
 }
 
-func wrFlags(fs *flag.FlagSet, falseVal string, toUpper bool,
+func wrFlags(fs *flag.FlagSet, falseVal string, trueVal string, toUpper bool,
 	prefix string, decl string, w io.Writer) {
 	// Produce the output
 	var out []string
@@ -253,11 +257,14 @@ func wrFlags(fs *flag.FlagSet, falseVal string, toUpper bool,
 		type isbooler interface {
 			IsBoolFlag() bool
 		}
-		if _, ok := f.Value.(isbooler); !ok || f.Value.String() != "false" {
+		if _, ok := f.Value.(isbooler); ok {
+			if f.Value.String() == "true" {
+				v = trueVal
+			} else {
+				v = falseVal
+			}
+		} else {
 			v = f.Value.String()
-		}
-		if v == "" {
-			v = falseVal
 		}
 		name := f.Name
 		quote := true

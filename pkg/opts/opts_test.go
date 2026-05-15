@@ -215,6 +215,51 @@ gotopt2_foo='false'
 `,
 		},
 		{
+			name: "Bool True with custom value for true",
+			args: []string{"--foo"},
+			input: `
+trueValue: "on"
+flags:
+- name: "foo"
+  help: "This is foo"
+  type: bool
+`,
+			expected: `# gotopt2:generated:begin
+gotopt2_foo='on'
+# gotopt2:generated:end
+`,
+		},
+		{
+			name: "Bool True explicit with custom value for true",
+			args: []string{"--foo=true"},
+			input: `
+trueValue: "on"
+flags:
+- name: "foo"
+  help: "This is foo"
+  type: bool
+`,
+			expected: `# gotopt2:generated:begin
+gotopt2_foo='on'
+# gotopt2:generated:end
+`,
+		},
+		{
+			name: "Bool False with custom value for true (should output empty by default without falseValue)",
+			args: []string{},
+			input: `
+trueValue: "on"
+flags:
+- name: "foo"
+  help: "This is foo"
+  type: bool
+`,
+			expected: `# gotopt2:generated:begin
+gotopt2_foo=''
+# gotopt2:generated:end
+`,
+		},
+		{
 			name: "Bool with arg",
 			args: []string{"--foo", "file1", "file2"},
 			input: `

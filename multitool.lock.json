@@ -4,10 +4,22 @@
     "binaries": [
       {
         "kind": "archive",
-        "url": "https://github.com/filmil/gotopt2/releases/download/v2.4.1/gotopt2-linux-amd64.zip",
+        "url": "https://github.com/filmil/gotopt2/releases/download/v2.5.1/gotopt2-linux-amd64.zip",
         "sha256": "4be1ababcda1ce4df728f6d7ca65fdf0fce0cecfc7e0a28a24d06ad820270568",
         "os": "linux",
         "file": "gotopt2/gotopt2",
+        "cpu": "x86_64"
+      }
+    ]
+  },
+  "gotopt2-generator": {
+    "binaries": [
+      {
+        "kind": "archive",
+        "url": "https://github.com/filmil/gotopt2/releases/download/v2.5.1/gotopt2-generator-linux-amd64.zip",
+        "sha256": "3e96658cc5f298a23d37aa9f8f309ab2fd6511db6ea909a196e1f81f1088cd8f",
+        "os": "linux",
+        "file": "gotopt2-generator/gotopt2-generator",
         "cpu": "x86_64"
       }
     ]
