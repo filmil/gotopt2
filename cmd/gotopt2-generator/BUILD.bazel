@@ -1,0 +1,33 @@
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+go_library(
+    name = "gotopt2-generator_lib",
+    srcs = ["main.go"],
+    embedsrcs = ["parser.sh.tmpl"],
+    importpath = "github.com/filmil/gotopt2/cmd/gotopt2-generator",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//pkg/opts",
+        "@in_gopkg_yaml_v3//:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "gotopt2-generator",
+    embed = [":gotopt2-generator_lib"],
+    visibility = ["//visibility:public"],
+)
+
+sh_test(
+    name = "compare_test",
+    srcs = ["compare_test.sh"],
+    args = [
+        "$(location //cmd/gotopt2)",
+        "$(location :gotopt2-generator)",
+    ],
+    data = [
+        "//cmd/gotopt2",
+        ":gotopt2-generator",
+    ],
+)
