@@ -33,3 +33,4 @@ use_repo(multitool, "multitool")
 
 # rules_shell
 bazel_dep(name = "rules_shell", version = "0.8.0")
+bazel_dep(name = "protobuf", version = "34.1")
