@@ -14,7 +14,7 @@ import (
 	yaml "gopkg.in/yaml.v3"
 )
 
-//go:embed parser.sh.tmpl
+//go:embed parser.sh.tmpl parser.fish.tmpl
 var tmplFS embed.FS
 
 func main() {
