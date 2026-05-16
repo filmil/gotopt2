@@ -23,7 +23,7 @@ function parse_args
 {{- range .Flags }}
   {{- if eq .Type 3 }}
       case --{{ .Name }}
-        set -g {{ .ActualVarName }} 'true'
+        set -g {{ .ActualVarName }} '{{ .TrueValue }}'
         set -e argv[1]
   {{- else if eq .Type 4 }}
       case '--{{ .Name }}=*'
@@ -66,9 +66,6 @@ function parse_args
       set -a args_vals "'$esc'"
     end
     set -l args_out (string join " " $args_vals)
-    echo "{{ .ArgsOutputDecl }}"
-  else
-    set -l args_out ""
     echo "{{ .ArgsOutputDecl }}"
   end
   echo "# gotopt2:generated:end"

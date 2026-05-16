@@ -10,10 +10,13 @@ local_path_override(
 )
 
 # rules_shell
-bazel_dep(name = "rules_shell", version = "0.6.1")
+bazel_dep(name = "rules_shell", version = "0.8.0")
 
 # multitool setup for the generated workspace to access tools
 bazel_dep(name = "rules_multitool", version = "1.11.1")
 
 multitool = use_extension("@rules_multitool//multitool:extension.bzl", "multitool")
 use_repo(multitool, "multitool")
+
+bazel_dep(name = "protobuf", version = "34.1")
+bazel_dep(name = "rules_android", version = "0.7.2")

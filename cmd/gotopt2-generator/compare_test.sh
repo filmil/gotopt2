@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash -x
+/bin/bash
 set -euo pipefail
 
 GOTOPT2="$1"
@@ -29,7 +30,7 @@ run_test() {
   "$GOTOPT2" "${args[@]}" < "$config_file" > "$out_gotopt2" 2> "$err_gotopt2"
   local gotopt2_exit=$?
 
-  "$GENERATOR" < "$config_file" > "$parser_sh" 2>/dev/null
+  "$GENERATOR" < "$config_file" > "$parser_sh" 
   bash -c "source $parser_sh; parse_args \"\$@\"" _ "${args[@]}" > "$out_generator" 2> "$err_generator"
   local generator_exit=$?
   set -e
@@ -62,10 +63,10 @@ run_test() {
       local err_generator_fish="$TEMP_DIR/err_generator_fish_$name"
       local parser_fish="$TEMP_DIR/parser_$name.fish"
 
-      "$GENERATOR" --shell=fish < "$config_file" > "$parser_fish" 2>/dev/null
+      "$GENERATOR" --shell=fish < "$config_file" > "$parser_fish" 
 
       set +e
-      fish -c "source $parser_fish; parse_args \$argv" _ "${args[@]}" > "$out_generator_fish" 2> "$err_generator_fish"
+      fish -c "source $parser_fish; parse_args \$argv" -- "${args[@]}" > "$out_generator_fish" 2> "$err_generator_fish"
       local generator_fish_exit=$?
       set -e
 
