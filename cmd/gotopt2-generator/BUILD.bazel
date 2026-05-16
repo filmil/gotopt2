@@ -5,7 +5,7 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
 go_library(
     name = "gotopt2-generator_lib",
     srcs = ["main.go"],
-    embedsrcs = ["parser.sh.tmpl"],
+    embedsrcs = ["parser.sh.tmpl", "parser.fish.tmpl"],
     importpath = "github.com/filmil/gotopt2/cmd/gotopt2-generator",
     visibility = ["//visibility:private"],
     deps = [
