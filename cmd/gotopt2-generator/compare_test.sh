@@ -39,7 +39,7 @@ run_test() {
       exit 1
   fi
 
-  if [[ "$name" == "Help" ]]; then
+  if [[ "$name" == "Help" ]] || [[ "$name" == "HelpProgramName" ]]; then
       # Help output to stderr might be slightly different stylistically, 
       # but we can check if both exited 11 and printed something.
       if [[ $gotopt2_exit -ne 11 ]]; then
@@ -50,12 +50,11 @@ run_test() {
          echo "generator didn't print usage!"
          exit 1
       fi
-      return 0
-  fi
-
-  if ! diff -u "$out_gotopt2" "$out_generator"; then
-    echo "Outputs differ for test: $name"
-    exit 1
+  else
+      if ! diff -u "$out_gotopt2" "$out_generator"; then
+        echo "Outputs differ for test: $name"
+        exit 1
+      fi
   fi
 }
 
