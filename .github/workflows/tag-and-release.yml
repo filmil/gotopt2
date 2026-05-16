@@ -25,6 +25,8 @@ on:
 jobs:
   tag:
     runs-on: ubuntu-latest
+    outputs:
+      tag_name: ${{ steps.tag_version.outputs.new_tag }}
     steps:
       - name: Setup bazel
         uses: bazel-contrib/setup-bazel@0.19.0
@@ -108,3 +110,10 @@ jobs:
           artifacts: "bazel-bin/cmd/gotopt2/gotopt2-${{ matrix.os }}-${{ matrix.arch }}.zip,bazel-bin/cmd/gotopt2-generator/gotopt2-generator-${{ matrix.os }}-${{ matrix.arch }}.zip"
           tag: ${{ steps.tag_version.outputs.previous_tag }}
 
+  publish:
+    needs: [tag, release]
+    uses: ./.github/workflows/publish.yml
+    with:
+      tag_name: ${{ needs.tag.outputs.tag_name }}
+    secrets:
+      BCR_PUBLISH_TOKEN: ${{ secrets.BCR_PUBLISH_TOKEN }}
