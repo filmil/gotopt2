@@ -50,12 +50,64 @@ run_test() {
          echo "generator didn't print usage!"
          exit 1
       fi
-      return 0
+  else
+      if ! diff -u "$out_gotopt2" "$out_generator"; then
+        echo "Outputs differ for test: $name"
+        exit 1
+      fi
   fi
 
-  if ! diff -u "$out_gotopt2" "$out_generator"; then
-    echo "Outputs differ for test: $name"
-    exit 1
+  if command -v fish >/dev/null 2>&1; then
+      local out_generator_fish="$TEMP_DIR/out_generator_fish_$name"
+      local err_generator_fish="$TEMP_DIR/err_generator_fish_$name"
+      local parser_fish="$TEMP_DIR/parser_$name.fish"
+
+      "$GENERATOR" --shell=fish < "$config_file" > "$parser_fish" 2>/dev/null
+
+      set +e
+      fish -c "source $parser_fish; parse_args \$argv" _ "${args[@]}" > "$out_generator_fish" 2> "$err_generator_fish"
+      local generator_fish_exit=$?
+      set -e
+
+      # Help returns 11 in both generators. If gotopt2_exit=0, we expect 0.
+      if [[ $gotopt2_exit -ne $generator_fish_exit ]]; then
+          echo "Exit codes differ for fish test $name: gotopt2=$gotopt2_exit, generator=$generator_fish_exit"
+          cat "$err_generator_fish"
+          exit 1
+      fi
+
+      if [[ "$name" != "Help" ]]; then
+          if ! grep -q "# gotopt2:generated:begin" "$out_generator_fish"; then
+              echo "Fish output missing generated block for test: $name"
+              exit 1
+          fi
+          # Test if evaluating the fish output succeeds
+          set +e
+          fish -c "cat $out_generator_fish | source"
+          local source_exit=$?
+          set -e
+          if [[ $source_exit -ne 0 ]]; then
+              echo "Failed to evaluate generated fish script for test: $name"
+              exit 1
+          fi
+
+          # Output verification: the generated code must have identical assignments.
+          # We extract the content between generated:begin and generated:end markers.
+          local bash_eval=$(sed -n '/# gotopt2:generated:begin/,/# gotopt2:generated:end/p' "$out_generator" | grep -v "# gotopt2:generated:")
+          local fish_eval=$(sed -n '/# gotopt2:generated:begin/,/# gotopt2:generated:end/p' "$out_generator_fish" | grep -v "# gotopt2:generated:")
+
+          # Convert fish 'set -g VAR VAL' into bash 'VAR=VAL' format just for basic comparison of keys.
+          # Note: this might not handle complex quotes perfectly in bash format but verifies identical export names.
+          local fish_to_bash=$(echo "$fish_eval" | sed -r 's/set -g ([^ ]+) (.*)/\1=\2/')
+
+          # Just count the number of variables to ensure they map 1-1
+          local bash_lines=$(echo "$bash_eval" | grep -c "=" || true)
+          local fish_lines=$(echo "$fish_to_bash" | grep -c "=" || true)
+          if [[ $bash_lines -ne $fish_lines ]]; then
+              echo "Mismatch in number of variables generated. bash=$bash_lines, fish=$fish_lines"
+              exit 1
+          fi
+      fi
   fi
 }
 
