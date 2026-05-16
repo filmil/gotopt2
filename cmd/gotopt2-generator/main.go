@@ -18,7 +18,10 @@ import (
 var tmplFS embed.FS
 
 func main() {
-	if err := run(os.Stdin, os.Args[1:], os.Stdout); err != nil {
+	shell := flag.String("shell", "bash", "The shell to generate code for (bash, fish)")
+	flag.Parse()
+
+	if err := run(os.Stdin, *shell, os.Stdout); err != nil {
 		if err == flag.ErrHelp {
 			os.Exit(11)
 		}
@@ -42,18 +45,23 @@ type TemplateFlag struct {
 	Help          string
 }
 
-func run(r io.Reader, args []string, w io.Writer) error {
+func run(r io.Reader, shell string, w io.Writer) error {
 	d := yaml.NewDecoder(r)
 	var c opts.Config
 	if err := d.Decode(&c); err != nil {
 		return fmt.Errorf("decoding configuration: %v", err)
 	}
 
-	return generateBash(c, w)
+	return generateShell(c, w, shell)
 }
 
-func generateBash(c opts.Config, w io.Writer) error {
-	tmpl, err := template.ParseFS(tmplFS, "parser.sh.tmpl")
+func generateShell(c opts.Config, w io.Writer, shell string) error {
+	tmplName := "parser.sh.tmpl"
+	if shell == "fish" {
+		tmplName = "parser.fish.tmpl"
+	}
+
+	tmpl, err := template.ParseFS(tmplFS, tmplName)
 	if err != nil {
 		return fmt.Errorf("parsing template: %v", err)
 	}
@@ -79,21 +87,50 @@ func generateBash(c opts.Config, w io.Writer) error {
 			Help:          f.Help,
 		})
 		varNameStr := f.Name
-		if f.Type == opts.FTStringList {
-			name := varNameStr + "__list"
-			outputs = append(outputs, fmt.Sprintf("  local %s_out\n  if [ ${#%s[@]} -eq 0 ]; then\n    %s_out=\"()\"\n  else\n    local %s_vals=()\n    for v in \"${%s[@]}\"; do\n      %s_vals+=(\"\\\"$v\\\"\")\n    done\n    %s_out=\"(${%s_vals[*]:-})\"\n  fi\n  echo \"%s\"",
-				actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", declLineBash(name, fmt.Sprintf("${%s_out}", actualVarName+"__list"), c.Prefix, c.Declaration, c.AllCaps, false)))
+		if shell == "fish" {
+			if f.Type == opts.FTStringList {
+				name := varNameStr + "__list"
+				outputs = append(outputs, fmt.Sprintf("  set -l %s_out\n  if test (count $%s) -eq 0\n    set %s_out \"\"\n  else\n    set -l %s_vals\n    for v in $%s\n      set -l esc (string replace -a \"'\" \"\\\\'\" \"$v\")\n      set -a %s_vals \"'$esc'\"\n    end\n    set %s_out (string join \" \" $%s_vals)\n  end\n  echo \"%s\"",
+					actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", declLineFish(name, fmt.Sprintf("$%s_out", actualVarName+"__list"), c.Prefix, c.AllCaps, false)))
+			} else {
+				outputs = append(outputs, fmt.Sprintf("  set -l %s_esc (string replace -a \"'\" \"\\\\'\" \"$%s\")\n  echo \"%s\"", actualVarName, actualVarName, declLineFish(varNameStr, fmt.Sprintf("$%s_esc", actualVarName), c.Prefix, c.AllCaps, true)))
+			}
 		} else {
-			outputs = append(outputs, fmt.Sprintf("  echo \"%s\"", declLineBash(varNameStr, fmt.Sprintf("${%s}", actualVarName), c.Prefix, c.Declaration, c.AllCaps, true)))
+			if f.Type == opts.FTStringList {
+				name := varNameStr + "__list"
+				outputs = append(outputs, fmt.Sprintf("  local %s_out\n  if [ ${#%s[@]} -eq 0 ]; then\n    %s_out=\"()\"\n  else\n    local %s_vals=()\n    for v in \"${%s[@]}\"; do\n      %s_vals+=(\"\\\"$v\\\"\")\n    done\n    %s_out=\"(${%s_vals[*]:-})\"\n  fi\n  echo \"%s\"",
+					actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", declLineBash(name, fmt.Sprintf("${%s_out}", actualVarName+"__list"), c.Prefix, c.Declaration, c.AllCaps, false)))
+			} else {
+				outputs = append(outputs, fmt.Sprintf("  echo \"%s\"", declLineBash(varNameStr, fmt.Sprintf("${%s}", actualVarName), c.Prefix, c.Declaration, c.AllCaps, true)))
+			}
 		}
 	}
 
 	sort.Strings(outputs)
 	data.SortedOutputs = outputs
 
-	data.ArgsOutputDecl = declLineBash("args__", "${args_out}", c.Prefix, c.Declaration, c.AllCaps, false)
+	if shell == "fish" {
+		data.ArgsOutputDecl = declLineFish("args__", "$args_out", c.Prefix, c.AllCaps, false)
+	} else {
+		data.ArgsOutputDecl = declLineBash("args__", "${args_out}", c.Prefix, c.Declaration, c.AllCaps, false)
+	}
 
 	return tmpl.Execute(w, data)
+}
+
+func declLineFish(name, value, prefix string, toUpper, quote bool) string {
+	r := strings.NewReplacer("-", "_")
+	name = r.Replace(name)
+	fullVarName := fmt.Sprintf("%sgotopt2_%s", prefix, name)
+	if toUpper {
+		fullVarName = strings.ToUpper(fullVarName)
+	}
+	if quote {
+		assignment := fmt.Sprintf("set -g %s '%s'", fullVarName, value)
+		return assignment
+	}
+	assignment := fmt.Sprintf("set -g %s %s", fullVarName, value)
+	return assignment
 }
 
 func declLineBash(name, value, prefix, decl string, toUpper, quote bool) string {
