@@ -344,6 +344,16 @@ flags:
 `,
 			wantError: fmt.Errorf("not a string:"),
 		},
+		{
+			name: "Invalid YAML Decode",
+			args: []string{},
+			input: `
+flags:
+  - name: "foo"
+   type: string
+`,
+			wantError: fmt.Errorf("while decoding configuration:"),
+		},
 	}
 	for _, test := range tests {
 		test := test
