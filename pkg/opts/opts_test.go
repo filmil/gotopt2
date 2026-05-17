@@ -344,6 +344,18 @@ flags:
 `,
 			wantError: fmt.Errorf("not a string:"),
 		},
+		{
+			name: "Unknown flag type",
+			args: []string{},
+			input: `
+flags:
+- name: "foo"
+  type: "some_unknown_type"
+`,
+			expected: `# gotopt2:generated:begin
+# gotopt2:generated:end
+`,
+		},
 	}
 	for _, test := range tests {
 		test := test
