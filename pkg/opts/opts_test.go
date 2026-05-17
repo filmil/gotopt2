@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"gopkg.in/yaml.v3"
 )
 
 func TestGotopt2(t *testing.T) {
@@ -364,6 +365,83 @@ flags:
 			if !cmp.Equal(expects, actuals) {
 				t.Errorf("diff:\n%v\nactual:\n%+v\nwant:\n%+v",
 					cmp.Diff(expects, actuals), actuals, expects)
+			}
+		})
+	}
+}
+
+func TestFTypeUnmarshalYAML(t *testing.T) {
+	tests := []struct {
+		name      string
+		input     string
+		expected  FType
+		wantError error
+	}{
+		{
+			name:     "string type",
+			input:    "string",
+			expected: FTString,
+		},
+		{
+			name:     "bool type",
+			input:    "bool",
+			expected: FTBool,
+		},
+		{
+			name:     "int type",
+			input:    "int",
+			expected: FTInt,
+		},
+		{
+			name:     "stringlist type",
+			input:    "stringlist",
+			expected: FTStringList,
+		},
+		{
+			name:     "unknown type",
+			input:    "unknown",
+			expected: FTUnknown,
+		},
+		{
+			name:      "invalid yaml (integer)",
+			input:     "123",
+			wantError: fmt.Errorf("not a string:"),
+		},
+		{
+			name:      "invalid yaml (boolean)",
+			input:     "true",
+			wantError: fmt.Errorf("not a string:"),
+		},
+		{
+			name:      "invalid yaml (array)",
+			input:     "[1, 2]",
+			wantError: fmt.Errorf("not a string:"),
+		},
+		{
+			name:      "invalid yaml (object)",
+			input:     "{foo: bar}",
+			wantError: fmt.Errorf("not a string:"),
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			var f FType
+			err := yaml.Unmarshal([]byte(test.input), &f)
+			if test.wantError != nil {
+				if err == nil {
+					t.Fatalf("expected error containing %q, got nil", test.wantError.Error())
+				}
+				if !strings.Contains(err.Error(), test.wantError.Error()) {
+					t.Fatalf("expected error containing %q, got %q", test.wantError.Error(), err.Error())
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("unexpected error: %v", err)
+				}
+				if f != test.expected {
+					t.Fatalf("expected %v, got %v", test.expected, f)
+				}
 			}
 		})
 	}

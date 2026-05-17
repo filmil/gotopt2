@@ -46,9 +46,12 @@ const (
 )
 
 // UnmarshalYAML implements yaml.Unmarshaler
-func (f *FType) UnmarshalYAML(fn func(interface{}) error) error {
+func (f *FType) UnmarshalYAML(value *yaml.Node) error {
+	if value.Kind != yaml.ScalarNode || (value.Tag != "!!str" && value.Tag != "") {
+		return fmt.Errorf("not a string: %v", value.Value)
+	}
 	var s string
-	if err := fn(&s); err != nil {
+	if err := value.Decode(&s); err != nil {
 		return fmt.Errorf("not a string: %v", s)
 	}
 	switch s {
