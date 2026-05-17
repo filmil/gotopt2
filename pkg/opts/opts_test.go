@@ -344,6 +344,17 @@ flags:
 `,
 			wantError: fmt.Errorf("not a string:"),
 		},
+		{
+			name: "ParseInt Error",
+			args: []string{},
+			input: `
+flags:
+- name: "foo"
+  type: int
+  default: "abc"
+`,
+			wantError: fmt.Errorf("flag: \"abc\": strconv.Atoi:"),
+		},
 	}
 	for _, test := range tests {
 		test := test
