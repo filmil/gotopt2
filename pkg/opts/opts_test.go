@@ -344,6 +344,17 @@ flags:
 `,
 			wantError: fmt.Errorf("not a string:"),
 		},
+		{
+			name: "Invalid Bool default value",
+			args: []string{},
+			input: `
+flags:
+- name: "foo"
+  type: bool
+  default: "not_a_bool"
+`,
+			wantError: fmt.Errorf("not a bool value: \"not_a_bool\""),
+		},
 	}
 	for _, test := range tests {
 		test := test
@@ -364,6 +375,60 @@ flags:
 			if !cmp.Equal(expects, actuals) {
 				t.Errorf("diff:\n%v\nactual:\n%+v\nwant:\n%+v",
 					cmp.Diff(expects, actuals), actuals, expects)
+			}
+		})
+	}
+}
+
+func TestParseBool(t *testing.T) {
+	tests := []struct {
+		name      string
+		input     string
+		want      bool
+		wantError error
+	}{
+		{
+			name:      "True string",
+			input:     "true",
+			want:      true,
+			wantError: nil,
+		},
+		{
+			name:      "False string",
+			input:     "false",
+			want:      false,
+			wantError: nil,
+		},
+		{
+			name:      "Empty string",
+			input:     "",
+			want:      false,
+			wantError: nil,
+		},
+		{
+			name:      "Invalid string",
+			input:     "invalid",
+			want:      false,
+			wantError: fmt.Errorf("not a bool value: %q", "invalid"),
+		},
+	}
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			got, err := parseBool(test.input)
+			if err != nil {
+				if test.wantError == nil {
+					t.Fatalf("unexpected error: %v", err)
+				}
+				if !strings.Contains(err.Error(), test.wantError.Error()) {
+					t.Fatalf("parseBool(%q)=%v, want %v", test.input, err, test.wantError)
+				}
+			} else if test.wantError != nil {
+				t.Fatalf("expected error %v, got nil", test.wantError)
+			}
+			if got != test.want {
+				t.Errorf("parseBool(%q) = %v, want %v", test.input, got, test.want)
 			}
 		})
 	}
