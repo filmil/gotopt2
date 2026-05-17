@@ -159,8 +159,6 @@ func (s *StringListFlag) String() string {
 
 func config(r io.Reader) (Config, error) {
 	d := yaml.NewDecoder(r)
-	// SetStrict is not supported in v3.
-	//d.SetStrict(true)
 	var (
 		c   Config
 		err error
