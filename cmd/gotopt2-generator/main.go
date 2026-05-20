@@ -11,7 +11,6 @@ import (
 	"text/template"
 
 	"github.com/filmil/gotopt2/pkg/opts"
-	yaml "gopkg.in/yaml.v3"
 )
 
 //go:embed parser.sh.tmpl parser.fish.tmpl
@@ -47,10 +46,9 @@ type TemplateFlag struct {
 }
 
 func run(r io.Reader, shell string, w io.Writer) error {
-	d := yaml.NewDecoder(r)
-	var c opts.Config
-	if err := d.Decode(&c); err != nil {
-		return fmt.Errorf("decoding configuration: %v", err)
+	c, err := opts.ParseConfig(r)
+	if err != nil {
+		return err
 	}
 
 	return generateShell(c, w, shell)

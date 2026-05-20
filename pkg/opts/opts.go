@@ -79,13 +79,13 @@ type Flag struct {
 // Run parses args based on a configuration supplied in r.  w gets all the
 // output.
 func Run(r io.Reader, args []string, w io.Writer) error {
-	c, err := config(r)
+	c, err := ParseConfig(r)
 	if err != nil {
 		return err
 	}
 
 	// Configure the flag set.
-	fs, err := flagSet(c)
+	fs, err := GenerateFlagSet(c)
 	if err != nil {
 		return err
 	}
@@ -157,7 +157,7 @@ func (s *StringListFlag) String() string {
 	return fmt.Sprintf("(%v)", strings.Join(q, " "))
 }
 
-func config(r io.Reader) (Config, error) {
+func ParseConfig(r io.Reader) (Config, error) {
 	d := yaml.NewDecoder(r)
 	var (
 		c   Config
@@ -170,7 +170,7 @@ func config(r io.Reader) (Config, error) {
 	return c, nil
 }
 
-func flagSet(c Config) (*flag.FlagSet, error) {
+func GenerateFlagSet(c Config) (*flag.FlagSet, error) {
 	fs := flag.NewFlagSet("", flag.ContinueOnError)
 	for _, f := range c.Flags {
 		switch f.Type {
