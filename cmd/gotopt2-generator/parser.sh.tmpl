@@ -61,17 +61,5 @@ parse_args() {
     esac
   done
 
-  echo "# gotopt2:generated:begin"
-{{- range .SortedOutputs }}
-  {{ . }}
-{{- end }}
-  if [ ${#{{ .ArgsVarName }}[@]} -gt 0 ]; then
-    local args_vals=()
-    local arg_name="{{ .ArgsVarName }}"
-    eval "for v in \"\${${arg_name}[@]}\"; do args_vals+=(\"'\$v'\"); done"
-    local args_out="(${args_vals[*]:-})"
-    echo "{{ .ArgsOutputDecl }}"
-  fi
-  echo "# gotopt2:generated:end"
 }
 {{/* We want to support --help */}}

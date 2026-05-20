@@ -55,18 +55,4 @@ function parse_args
     end
   end
 
-  echo "# gotopt2:generated:begin"
-{{- range .SortedOutputs }}
-  {{ . }}
-{{- end }}
-  if test (count ${{ .ArgsVarName }}) -gt 0
-    set -l args_vals
-    for v in ${{ .ArgsVarName }}
-      set -l esc (string replace -a "'" "\\'" "$v")
-      set -a args_vals "'$esc'"
-    end
-    set -l args_out (string join " " $args_vals)
-    echo "{{ .ArgsOutputDecl }}"
-  end
-  echo "# gotopt2:generated:end"
 end
