@@ -388,3 +388,6 @@ only one additional component.  Compare to say needing to install the whole GNU
 the expectation is that your system has one, but it's never the version you
 need.
 
+# Documentation
+
+* [Tutorial: From Zero to Hero](docs/tutorial.md)
