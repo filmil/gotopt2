@@ -318,6 +318,17 @@ Here is a comparison between `getopt`, `argbash`, and `gotopt2` to help you deci
 
 # Q&A
 
+## Comparison Matrix
+
+Here is a quick overview of how `gotopt2` compares to `getopt` and `argbash`.
+
+| Feature | `getopt` | `argbash` | `gotopt2` |
+| :--- | :--- | :--- | :--- |
+| **Dependencies** | Target system `getopt` | `m4`, `make` | Self-contained Go binary |
+| **Configuration** | Arcane string flags | Inline bash comments | Simple YAML |
+| **Resulting Variables** | Unparsed string | Fully parsed bash variables | Fully parsed bash variables |
+| **Help Text Generation** | Manual | Auto-generated | Auto-generated |
+
 ## Why is it named gotopt2?
 
 I thought I was being original by riffing on the very well known name "getopt"
