@@ -33,4 +33,4 @@ Enhance the YAML configuration schema to support common CLI patterns.
 ## 5. Documentation & Examples
 - [ ] **Advanced Examples:** Add examples for using `gotopt2` with `local` variables in bash functions.
 - [ ] **Tutorial:** A "From Zero to Hero" guide in `docs/` or an expanded `README.md`.
-- [ ] **Comparison Matrix:** Explicitly show the differences between `getopt`, `argbash`, and `gotopt2`.
+- [x] **Comparison Matrix:** Explicitly show the differences between `getopt`, `argbash`, and `gotopt2`.
