@@ -304,6 +304,18 @@ When `gotopt2` exits, it sets one of the following numerical error codes:
 at stdin? |
 | 142 | Any other error |
 
+# Comparison Matrix
+
+Here is a comparison between `getopt`, `argbash`, and `gotopt2` to help you decide which tool fits your needs.
+
+| Feature | `getopt` | `argbash` | `gotopt2` / `gotopt2-generator` |
+| --- | --- | --- | --- |
+| **Dependencies** | Requires `getopt` binary on target system (often different versions/behaviors across OSes). | Requires `m4` and a build step (e.g., `Makefile`). | Small, self-contained static binary (`gotopt2`) or zero-dependency shell script (`gotopt2-generator`). |
+| **Configuration** | Arcane and terse string syntax. | Specialized bash comments/macros. | Declarative, self-documenting YAML configuration. |
+| **Auto-generated Help** | No | Yes | Yes (both `gotopt2` and `gotopt2-generator`). |
+| **Parsing Effort** | You still need to write bash loops to parse the ordered output. | Fully generates the parsing logic. | Fully handles the parsing; you just `eval` the output or `source` the generated script. |
+| **Portability** | Inconsistent across platforms (e.g., macOS vs GNU Linux). | Build step can be complex in some environments; generated script is portable. | Binary is portable via simple container/install. Generator output is fully self-contained standard bash. |
+
 # Q&A
 
 ## Why is it named gotopt2?
