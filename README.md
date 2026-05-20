@@ -8,6 +8,8 @@ shell script that can be readily evaluated.
 You can use it to parse command line options in your shell script instead of
 rolling your own flag parsing code, or using `getopt` or similar.
 
+> **New to `gotopt2`?** Check out the ["From Zero to Hero" Tutorial](docs/tutorial.md) to get started quickly!
+
 ## Quick example
 
 Here is how to check, quickly, what `gotopt2` does for you.
