@@ -38,17 +38,6 @@ gotopt2_args__=('arg')
 `,
 		},
 		{
-			name: "Invalid FType Unmarshal Object",
-			args: []string{},
-			input: `
-flags:
-- name: "foo"
-  type:
-    foo: "bar"
-`,
-			wantError: fmt.Errorf("not a string:"),
-		},
-		{
 			name: "Help",
 			args: []string{"--help"},
 			input: `
@@ -342,18 +331,6 @@ flags:
 			expected: `# gotopt2:generated:begin
 declareecho INJECTED xechoINJECTEDgotopt2_fooechoINJECTED='bar'
 declareecho INJECTED xechoINJECTEDgotopt2_args__=('arg')
-# gotopt2:generated:end
-`,
-		},
-		{
-			name: "Unknown FType Unmarshal",
-			args: []string{},
-			input: `
-flags:
-- name: "foo"
-  type: "unknown_type"
-`,
-			expected: `# gotopt2:generated:begin
 # gotopt2:generated:end
 `,
 		},

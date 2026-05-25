@@ -139,24 +139,4 @@ flags:
 '
 run_test "TrueValue" "$CONFIG_4" "--mybool"
 
-
-CONFIG_5='
-flags:
-- name: "foo"
-  help: "This is foo"
-  type: string
-- name: "bool-flag"
-  type: bool
-- name: "list-flag"
-  type: stringlist
-'
-run_test "SpaceSyntax" "$CONFIG_5" "--foo" "bar" "--bool-flag" "pos1" "pos2"
-
-CONFIG_6='
-flags:
-- name: "list-flag"
-  type: stringlist
-'
-run_test "ListSpaceSyntax" "$CONFIG_6" "--list-flag" "a,b,c"
-
 echo "All tests passed."

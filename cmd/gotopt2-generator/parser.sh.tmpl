@@ -35,29 +35,10 @@ parse_args() {
         done
         shift
         ;;
-      --{{ .Name }})
-        if [[ $# -lt 2 ]]; then
-          echo "Missing value for --{{ .Name }}" >&2
-          return 1
-        fi
-        IFS=',' read -ra ADDR <<< "$2"
-        for i in "${ADDR[@]}"; do
-          {{ .ActualVarName }}__list+=("$i")
-        done
-        shift 2
-        ;;
   {{- else }}
       --{{ .Name }}=*)
         {{ .ActualVarName }}="${1#*=}"
         shift
-        ;;
-      --{{ .Name }})
-        if [[ $# -lt 2 ]]; then
-          echo "Missing value for --{{ .Name }}" >&2
-          return 1
-        fi
-        {{ .ActualVarName }}="$2"
-        shift 2
         ;;
   {{- end }}
 {{- end }}
