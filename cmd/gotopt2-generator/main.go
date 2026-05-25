@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"sort"
 	"strings"
 	"text/template"
 
@@ -30,10 +29,8 @@ func main() {
 }
 
 type TemplateData struct {
-	Flags          []TemplateFlag
-	ArgsVarName    string
-	SortedOutputs  []string
-	ArgsOutputDecl string
+	Flags       []TemplateFlag
+	ArgsVarName string
 }
 
 type TemplateFlag struct {
@@ -68,8 +65,6 @@ func generateShell(c opts.Config, w io.Writer, shell string) error {
 	data := TemplateData{
 		ArgsVarName: varName("args__", c.Prefix, c.AllCaps),
 	}
-
-	var outputs []string
 
 	trueVal := c.TrueValue
 	if trueVal == "" {
@@ -125,38 +120,6 @@ func generateShell(c opts.Config, w io.Writer, shell string) error {
 	}
 
 	return tmpl.Execute(w, data)
-}
-
-func declLineFish(name, value, prefix string, toUpper, quote bool) string {
-	r := strings.NewReplacer("-", "_")
-	name = r.Replace(name)
-	fullVarName := fmt.Sprintf("%sgotopt2_%s", prefix, name)
-	if toUpper {
-		fullVarName = strings.ToUpper(fullVarName)
-	}
-	if quote {
-		assignment := fmt.Sprintf("set -g %s '%s'", fullVarName, value)
-		return assignment
-	}
-	assignment := fmt.Sprintf("set -g %s %s", fullVarName, value)
-	return assignment
-}
-
-func declLineBash(name, value, prefix, decl string, toUpper, quote bool) string {
-	r := strings.NewReplacer("-", "_")
-	name = r.Replace(name)
-	fullVarName := fmt.Sprintf("%sgotopt2_%s", prefix, name)
-	if toUpper {
-		fullVarName = strings.ToUpper(fullVarName)
-	}
-	assignment := fmt.Sprintf("%s='%s'", fullVarName, value)
-	if !quote {
-		assignment = fmt.Sprintf("%s=%s", fullVarName, value)
-	}
-	if decl == "" {
-		return assignment
-	}
-	return strings.Join([]string{decl, assignment}, " ")
 }
 
 func varName(name, prefix string, allCaps bool) string {
