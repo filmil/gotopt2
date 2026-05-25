@@ -8,6 +8,8 @@ shell script that can be readily evaluated.
 You can use it to parse command line options in your shell script instead of
 rolling your own flag parsing code, or using `getopt` or similar.
 
+> **New to `gotopt2`?** Check out the ["From Zero to Hero" Tutorial](docs/tutorial.md) to get started quickly!
+
 ## Quick example
 
 Here is how to check, quickly, what `gotopt2` does for you.
@@ -302,7 +304,30 @@ When `gotopt2` exits, it sets one of the following numerical error codes:
 at stdin? |
 | 142 | Any other error |
 
+# Comparison Matrix
+
+Here is a comparison between `getopt`, `argbash`, and `gotopt2` to help you decide which tool fits your needs.
+
+| Feature | `getopt` | `argbash` | `gotopt2` / `gotopt2-generator` |
+| --- | --- | --- | --- |
+| **Dependencies** | Requires `getopt` binary on target system (often different versions/behaviors across OSes). | Requires `m4` and a build step (e.g., `Makefile`). | Small, self-contained static binary (`gotopt2`) or zero-dependency shell script (`gotopt2-generator`). |
+| **Configuration** | Arcane and terse string syntax. | Specialized bash comments/macros. | Declarative, self-documenting YAML configuration. |
+| **Auto-generated Help** | No | Yes | Yes (both `gotopt2` and `gotopt2-generator`). |
+| **Parsing Effort** | You still need to write bash loops to parse the ordered output. | Fully generates the parsing logic. | Fully handles the parsing; you just `eval` the output or `source` the generated script. |
+| **Portability** | Inconsistent across platforms (e.g., macOS vs GNU Linux). | Build step can be complex in some environments; generated script is portable. | Binary is portable via simple container/install. Generator output is fully self-contained standard bash. |
+
 # Q&A
+
+## Comparison Matrix
+
+Here is a quick overview of how `gotopt2` compares to `getopt` and `argbash`.
+
+| Feature | `getopt` | `argbash` | `gotopt2` |
+| :--- | :--- | :--- | :--- |
+| **Dependencies** | Target system `getopt` | `m4`, `make` | Self-contained Go binary |
+| **Configuration** | Arcane string flags | Inline bash comments | Simple YAML |
+| **Resulting Variables** | Unparsed string | Fully parsed bash variables | Fully parsed bash variables |
+| **Help Text Generation** | Manual | Auto-generated | Auto-generated |
 
 ## Why is it named gotopt2?
 
@@ -363,3 +388,6 @@ only one additional component.  Compare to say needing to install the whole GNU
 the expectation is that your system has one, but it's never the version you
 need.
 
+# Documentation
+
+* [Tutorial: From Zero to Hero](docs/tutorial.md)

@@ -92,6 +92,33 @@ func generateShell(c opts.Config, w io.Writer, shell string) error {
 			TrueValue:     trueVal,
 			Help:          f.Help,
 		})
+		varNameStr := f.Name
+		if shell == "fish" {
+			if f.Type == opts.FTStringList {
+				name := varNameStr + "__list"
+				outputs = append(outputs, fmt.Sprintf("  set -l %s_out\n  if test (count $%s) -eq 0\n    set %s_out \"\"\n  else\n    set -l %s_vals\n    for v in $%s\n      set -l esc (string replace -a \"'\" \"\\\\'\" \"$v\")\n      set -a %s_vals \"'$esc'\"\n    end\n    set %s_out (string join \" \" $%s_vals)\n  end\n  echo \"%s\"",
+					actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", declLineFish(name, fmt.Sprintf("$%s_out", actualVarName+"__list"), c.Prefix, c.AllCaps, false)))
+			} else {
+				outputs = append(outputs, fmt.Sprintf("  set -l %s_esc (string replace -a \"'\" \"\\\\'\" \"$%s\")\n  echo \"%s\"", actualVarName, actualVarName, declLineFish(varNameStr, fmt.Sprintf("$%s_esc", actualVarName), c.Prefix, c.AllCaps, true)))
+			}
+		} else {
+			if f.Type == opts.FTStringList {
+				name := varNameStr + "__list"
+				outputs = append(outputs, fmt.Sprintf("  local %s_out\n  if [ ${#%s[@]} -eq 0 ]; then\n    %s_out=\"()\"\n  else\n    local %s_vals=()\n    for v in \"${%s[@]}\"; do\n      %s_vals+=(\"'$v'\")\n    done\n    %s_out=\"(${%s_vals[*]:-})\"\n  fi\n  echo \"%s\"",
+					actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", declLineBash(name, fmt.Sprintf("${%s_out}", actualVarName+"__list"), c.Prefix, c.Declaration, c.AllCaps, false)))
+			} else {
+				outputs = append(outputs, fmt.Sprintf("  echo \"%s\"", declLineBash(varNameStr, fmt.Sprintf("${%s}", actualVarName), c.Prefix, c.Declaration, c.AllCaps, true)))
+			}
+		}
+	}
+
+	sort.Strings(outputs)
+	data.SortedOutputs = outputs
+
+	if shell == "fish" {
+		data.ArgsOutputDecl = declLineFish("args__", "$args_out", c.Prefix, c.AllCaps, false)
+	} else {
+		data.ArgsOutputDecl = declLineBash("args__", "${args_out}", c.Prefix, c.Declaration, c.AllCaps, false)
 	}
 
 	return tmpl.Execute(w, data)
