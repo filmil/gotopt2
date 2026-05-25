@@ -29,10 +29,14 @@ parse_args() {
         ;;
   {{- else if eq .Type 4 }}
       --{{ .Name }}=*)
-        IFS=',' read -ra ADDR <<< "${1#*=}"
-        for i in "${ADDR[@]}"; do
-          {{ .ActualVarName }}__list+=("$i")
-        done
+        local val="${1#*=}"
+        if [ -n "$val" ]; then
+          while [[ "$val" == *","* ]]; do
+            {{ .ActualVarName }}__list+=("${val%%,*}")
+            val="${val#*,}"
+          done
+          {{ .ActualVarName }}__list+=("$val")
+        fi
         shift
         ;;
   {{- else }}
@@ -68,7 +72,7 @@ parse_args() {
   if [ ${#{{ .ArgsVarName }}[@]} -gt 0 ]; then
     local args_vals=()
     local arg_name="{{ .ArgsVarName }}"
-    eval "for v in \"\${${arg_name}[@]}\"; do args_vals+=(\"'\$v'\"); done"
+    eval "for v in \"\${${arg_name}[@]}\"; do v_esc=\"\${v//\\'/\\'\\\"\\'\\\"\\'}\"; args_vals+=(\"'\$v_esc'\"); done"
     local args_out="(${args_vals[*]:-})"
     echo "{{ .ArgsOutputDecl }}"
   fi

@@ -109,7 +109,7 @@ func generateShell(c opts.Config, w io.Writer, shell string) error {
 		} else {
 			if f.Type == opts.FTStringList {
 				name := varNameStr + "__list"
-				outputs = append(outputs, fmt.Sprintf("  local %s_out\n  if [ ${#%s[@]} -eq 0 ]; then\n    %s_out=\"()\"\n  else\n    local %s_vals=()\n    for v in \"${%s[@]}\"; do\n      %s_vals+=(\"\\\"$v\\\"\")\n    done\n    %s_out=\"(${%s_vals[*]:-})\"\n  fi\n  echo \"%s\"",
+				outputs = append(outputs, fmt.Sprintf("  local %s_out\n  if [ ${#%s[@]} -eq 0 ]; then\n    %s_out=\"()\"\n  else\n    local %s_vals=()\n    for v in \"${%s[@]}\"; do\n      %s_vals+=(\"'${v//\\'/\\'\\\"\\'\\\"\\'}'\")\n    done\n    %s_out=\"(${%s_vals[*]:-})\"\n  fi\n  echo \"%s\"",
 					actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", actualVarName+"__list", declLineBash(name, fmt.Sprintf("${%s_out}", actualVarName+"__list"), c.Prefix, c.Declaration, c.AllCaps, false)))
 			} else {
 				outputs = append(outputs, fmt.Sprintf("  echo \"%s\"", declLineBash(varNameStr, fmt.Sprintf("${%s}", actualVarName), c.Prefix, c.Declaration, c.AllCaps, true)))

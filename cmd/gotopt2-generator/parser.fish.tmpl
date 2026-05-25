@@ -28,9 +28,11 @@ function parse_args
   {{- else if eq .Type 4 }}
       case '--{{ .Name }}=*'
         set -l val (string replace -r "^--{{ .Name }}=" "" -- $argv[1])
-        set -l vals (string split "," -- $val)
-        for v in $vals
-          set -a -g {{ .ActualVarName }}__list $v
+        if test -n "$val"
+          set -l vals (string split "," -- $val)
+          for v in $vals
+            set -a -g {{ .ActualVarName }}__list $v
+          end
         end
         set -e argv[1]
   {{- else }}

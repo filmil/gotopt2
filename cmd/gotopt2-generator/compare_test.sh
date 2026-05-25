@@ -151,3 +151,18 @@ flags:
 run_test "TrueValue" "$CONFIG_4" "--mybool"
 
 echo "All tests passed."
+
+CONFIG_5='
+flags:
+- name: "list"
+  type: stringlist
+'
+run_test "StringListEmpty" "$CONFIG_5" --list=""
+run_test "StringListSpaces" "$CONFIG_5" --list="a, b , c  "
+run_test "StringListTrailingComma" "$CONFIG_5" --list="a,b,"
+run_test "StringListQuotes" "$CONFIG_5" --list="a,'b',c"
+
+CONFIG_6='
+flags: []
+'
+run_test "ArgsQuotes" "$CONFIG_6" -- "it's"
