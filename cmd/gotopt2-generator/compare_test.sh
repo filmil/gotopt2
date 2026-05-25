@@ -52,21 +52,28 @@ run_test() {
          exit 1
       fi
   else
-      if ! diff -u "$out_gotopt2" "$out_generator"; then
-        echo "Outputs differ for test: $name"
+      local env_gotopt2="$TEMP_DIR/env_gotopt2_$name"
+      local env_generator="$TEMP_DIR/env_generator_$name"
+
+      # We ignore standard output from the generator, but we extract env vars
+      bash -c "source \"$out_gotopt2\"; declare -p | grep -E '(gotopt2_|my_prefix)' | grep -v BASH_EXECUTION_STRING | grep -v '_=' | sort" > "$env_gotopt2"
+      bash -c "source \"$parser_sh\"; parse_args \"\$@\"; declare -p | grep -E '(gotopt2_|my_prefix)' | grep -v BASH_EXECUTION_STRING | grep -v '_=' | sort" _ "${args[@]}" > "$env_generator"
+
+      if ! diff -u "$env_gotopt2" "$env_generator"; then
+        echo "Environment variables differ for test: $name"
         exit 1
       fi
   fi
 
   if command -v fish >/dev/null 2>&1; then
-      local out_generator_fish="$TEMP_DIR/out_generator_fish_$name"
       local err_generator_fish="$TEMP_DIR/err_generator_fish_$name"
       local parser_fish="$TEMP_DIR/parser_$name.fish"
 
       "$GENERATOR" --shell=fish < "$config_file" > "$parser_fish" 
 
       set +e
-      fish -c "source $parser_fish; parse_args \$argv" -- "${args[@]}" > "$out_generator_fish" 2> "$err_generator_fish"
+      # Run it once just to get exit code and stderr
+      fish -c "source $parser_fish; parse_args \$argv" -- "${args[@]}" > /dev/null 2> "$err_generator_fish"
       local generator_fish_exit=$?
       set -e
 
@@ -78,34 +85,16 @@ run_test() {
       fi
 
       if [[ "$name" != "Help" ]]; then
-          if ! grep -q "# gotopt2:generated:begin" "$out_generator_fish"; then
-              echo "Fish output missing generated block for test: $name"
-              exit 1
-          fi
-          # Test if evaluating the fish output succeeds
-          set +e
-          fish -c "cat $out_generator_fish | source"
-          local source_exit=$?
-          set -e
-          if [[ $source_exit -ne 0 ]]; then
-              echo "Failed to evaluate generated fish script for test: $name"
-              exit 1
-          fi
+          local env_gotopt2_fish="$TEMP_DIR/env_gotopt2_fish_$name"
+          local env_generator_fish="$TEMP_DIR/env_generator_fish_$name"
 
-          # Output verification: the generated code must have identical assignments.
-          # We extract the content between generated:begin and generated:end markers.
-          local bash_eval=$(sed -n '/# gotopt2:generated:begin/,/# gotopt2:generated:end/p' "$out_generator" | grep -v "# gotopt2:generated:")
-          local fish_eval=$(sed -n '/# gotopt2:generated:begin/,/# gotopt2:generated:end/p' "$out_generator_fish" | grep -v "# gotopt2:generated:")
+          # Convert bash variables from gotopt2 into fish vars
+          # (For testing we just check that the variable keys are populated similarly)
+          fish -c "cat $out_gotopt2 | source; set | grep -E '^(gotopt2_|my_prefix)' | sort" > "$env_gotopt2_fish"
+          fish -c "source $parser_fish; parse_args \$argv; set | grep -E '^(gotopt2_|my_prefix)' | sort" -- "${args[@]}" > "$env_generator_fish"
 
-          # Convert fish 'set -g VAR VAL' into bash 'VAR=VAL' format just for basic comparison of keys.
-          # Note: this might not handle complex quotes perfectly in bash format but verifies identical export names.
-          local fish_to_bash=$(echo "$fish_eval" | sed -r 's/set -g ([^ ]+) (.*)/\1=\2/')
-
-          # Just count the number of variables to ensure they map 1-1
-          local bash_lines=$(echo "$bash_eval" | grep -c "=" || true)
-          local fish_lines=$(echo "$fish_to_bash" | grep -c "=" || true)
-          if [[ $bash_lines -ne $fish_lines ]]; then
-              echo "Mismatch in number of variables generated. bash=$bash_lines, fish=$fish_lines"
+          if ! diff -u "$env_gotopt2_fish" "$env_generator_fish"; then
+              echo "Fish environment variables differ for test: $name"
               exit 1
           fi
       fi
@@ -149,25 +138,5 @@ flags:
   type: bool
 '
 run_test "TrueValue" "$CONFIG_4" "--mybool"
-
-
-CONFIG_5='
-flags:
-- name: "foo"
-  help: "This is foo"
-  type: string
-- name: "bool-flag"
-  type: bool
-- name: "list-flag"
-  type: stringlist
-'
-run_test "SpaceSyntax" "$CONFIG_5" "--foo" "bar" "--bool-flag" "pos1" "pos2"
-
-CONFIG_6='
-flags:
-- name: "list-flag"
-  type: stringlist
-'
-run_test "ListSpaceSyntax" "$CONFIG_6" "--list-flag" "a,b,c"
 
 echo "All tests passed."

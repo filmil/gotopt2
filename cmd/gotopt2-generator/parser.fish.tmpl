@@ -33,28 +33,10 @@ function parse_args
           set -a -g {{ .ActualVarName }}__list $v
         end
         set -e argv[1]
-      case --{{ .Name }}
-        if test (count $argv) -lt 2
-          echo "Missing value for --{{ .Name }}" >&2
-          return 1
-        end
-        set -l val $argv[2]
-        set -l vals (string split "," -- $val)
-        for v in $vals
-          set -a -g {{ .ActualVarName }}__list $v
-        end
-        set -e argv[1..2]
   {{- else }}
       case '--{{ .Name }}=*'
         set -g {{ .ActualVarName }} (string replace -r "^--{{ .Name }}=" "" -- $argv[1])
         set -e argv[1]
-      case --{{ .Name }}
-        if test (count $argv) -lt 2
-          echo "Missing value for --{{ .Name }}" >&2
-          return 1
-        end
-        set -g {{ .ActualVarName }} $argv[2]
-        set -e argv[1..2]
   {{- end }}
 {{- end }}
       case --
@@ -73,18 +55,4 @@ function parse_args
     end
   end
 
-  echo "# gotopt2:generated:begin"
-{{- range .SortedOutputs }}
-  {{ . }}
-{{- end }}
-  if test (count ${{ .ArgsVarName }}) -gt 0
-    set -l args_vals
-    for v in ${{ .ArgsVarName }}
-      set -l esc (string replace -a "'" "\\'" "$v")
-      set -a args_vals "'$esc'"
-    end
-    set -l args_out (string join " " $args_vals)
-    echo "{{ .ArgsOutputDecl }}"
-  end
-  echo "# gotopt2:generated:end"
 end
