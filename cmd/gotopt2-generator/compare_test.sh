@@ -40,7 +40,7 @@ run_test() {
       exit 1
   fi
 
-  if [[ "$name" == "Help" ]]; then
+  if [[ "$name" == "Help" || "$name" == "HelpUsage" ]]; then
       # Help output to stderr might be slightly different stylistically, 
       # but we can check if both exited 11 and printed something.
       if [[ $gotopt2_exit -ne 11 ]]; then
@@ -50,6 +50,16 @@ run_test() {
       if ! grep -q "Usage" "$err_generator"; then
          echo "generator didn't print usage!"
          exit 1
+      fi
+      if [[ "$name" == "HelpUsage" ]]; then
+          if ! grep -q "Custom generator usage" "$err_generator"; then
+             echo "generator didn't print custom usage!"
+             exit 1
+          fi
+          if ! grep -q "Custom generator usage" "$err_gotopt2"; then
+             echo "gotopt2 didn't print custom usage!"
+             exit 1
+          fi
       fi
   else
       if ! diff -u "$out_gotopt2" "$out_generator"; then
@@ -77,7 +87,7 @@ run_test() {
           exit 1
       fi
 
-      if [[ "$name" != "Help" ]]; then
+      if [[ "$name" != "Help" && "$name" != "HelpUsage" ]]; then
           if ! grep -q "# gotopt2:generated:begin" "$out_generator_fish"; then
               echo "Fish output missing generated block for test: $name"
               exit 1
@@ -141,6 +151,15 @@ flags:
   help: "Foo configuration"
 '
 run_test "Help" "$CONFIG_3" "--help"
+
+CONFIG_3_5='
+usage: "Custom generator usage"
+flags:
+- name: "foo"
+  type: string
+  help: "Foo configuration"
+'
+run_test "HelpUsage" "$CONFIG_3_5" "--help"
 
 CONFIG_4='
 trueValue: "on"

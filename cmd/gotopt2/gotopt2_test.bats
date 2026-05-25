@@ -44,6 +44,29 @@ EOF
   [ "${#lines[@]}" -eq 4 ]
 }
 
+@test "Usage printing with usage text" {
+  run "${GOTOPT2}" --unknown <<EOF
+usage: "This is a custom usage text."
+flags:
+- name: "foo"
+  type: string
+  default: "nothing"
+  help: "This is some flag value."
+EOF
+  echo "${status}"
+  echo "${lines[0]}"
+  echo "${lines[1]}"
+  echo "${lines[2]}"
+  echo "${lines[3]}"
+  echo "${lines[4]}"
+  echo "${lines[5]}"
+  [ "${status}" -eq 142 ] # The exit code is randomly set to 142
+  [ "${lines[0]}" == "flag provided but not defined: -unknown" ]
+  [ "${lines[1]}" == "This is a custom usage text." ]
+  [ "${lines[2]}" == "Usage:" ]
+  [ "${lines[3]}" == "  -foo string" ]
+}
+
 @test "Stringlist printing" {
   run "${GOTOPT2}" --list=eenie,meenie,minie,moe <<EOF
 flags:

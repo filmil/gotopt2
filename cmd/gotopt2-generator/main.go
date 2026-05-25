@@ -34,6 +34,7 @@ type TemplateData struct {
 	ArgsVarName    string
 	SortedOutputs  []string
 	ArgsOutputDecl string
+	Usage          string
 }
 
 type TemplateFlag struct {
@@ -67,6 +68,7 @@ func generateShell(c opts.Config, w io.Writer, shell string) error {
 
 	data := TemplateData{
 		ArgsVarName: varName("args__", c.Prefix, c.AllCaps),
+		Usage:       c.Usage,
 	}
 
 	var outputs []string

@@ -32,6 +32,8 @@ type Config struct {
 	// Declaration is the default declaration word to use.  For example
 	// "readonly" or "local".
 	Declaration string `yaml:"declaration"`
+	// Usage provides a description for the command usage.
+	Usage string `yaml:"usage"`
 }
 
 // FType is the type of the flag variable
@@ -172,6 +174,13 @@ func ParseConfig(r io.Reader) (Config, error) {
 
 func GenerateFlagSet(c Config) (*flag.FlagSet, error) {
 	fs := flag.NewFlagSet("", flag.ContinueOnError)
+	fs.Usage = func() {
+		if c.Usage != "" {
+			fmt.Fprintf(fs.Output(), "%s\n\n", c.Usage)
+		}
+		fmt.Fprintf(fs.Output(), "Usage:\n")
+		fs.PrintDefaults()
+	}
 	for _, f := range c.Flags {
 		switch f.Type {
 		case FTString:

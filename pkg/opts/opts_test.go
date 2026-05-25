@@ -59,6 +59,17 @@ flags:
 			wantError: flag.ErrHelp,
 		},
 		{
+			name: "Help with Usage",
+			args: []string{"--help"},
+			input: `
+usage: "This is a custom usage string"
+flags:
+- name: "foo"
+  type: string
+`,
+			wantError: flag.ErrHelp,
+		},
+		{
 			name: "String list",
 			args: []string{"-foo=bar,baz,bat", "arg"},
 			input: `
