@@ -14,7 +14,11 @@ function parse_args
   while test (count $argv) -gt 0
     switch $argv[1]
       case --help
+{{- if .Usage }}
+        echo "{{ .Usage }}" >&2
+{{- else }}
         echo "Usage:" >&2
+{{- end }}
 {{- range .Flags }}
         echo "  --{{ .Name }}" >&2
         echo "        {{ .Help }} (default: \"{{ .DefaultValue }}\")" >&2

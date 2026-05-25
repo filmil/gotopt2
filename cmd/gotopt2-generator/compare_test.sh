@@ -40,16 +40,27 @@ run_test() {
       exit 1
   fi
 
-  if [[ "$name" == "Help" ]]; then
+  if [[ "$name" == "Help" || "$name" == "CustomUsage" ]]; then
       # Help output to stderr might be slightly different stylistically, 
       # but we can check if both exited 11 and printed something.
       if [[ $gotopt2_exit -ne 11 ]]; then
          echo "gotopt2 didn't exit with 11 on help!"
          exit 1
       fi
-      if ! grep -q "Usage" "$err_generator"; then
-         echo "generator didn't print usage!"
-         exit 1
+      if [[ "$name" == "CustomUsage" ]]; then
+          if ! grep -q "My custom usage" "$err_generator"; then
+             echo "generator didn't print custom usage!"
+             exit 1
+          fi
+          if ! grep -q "My custom usage" "$err_gotopt2"; then
+             echo "gotopt2 didn't print custom usage!"
+             exit 1
+          fi
+      else
+          if ! grep -q "Usage" "$err_generator"; then
+             echo "generator didn't print usage!"
+             exit 1
+          fi
       fi
   else
       local env_gotopt2="$TEMP_DIR/env_gotopt2_$name"
@@ -84,14 +95,19 @@ run_test() {
           exit 1
       fi
 
-      if [[ "$name" != "Help" ]]; then
+      if [[ "$name" != "Help" && "$name" != "CustomUsage" ]]; then
           local env_gotopt2_fish="$TEMP_DIR/env_gotopt2_fish_$name"
           local env_generator_fish="$TEMP_DIR/env_generator_fish_$name"
 
-          # Convert bash variables from gotopt2 into fish vars
-          # (For testing we just check that the variable keys are populated similarly)
-          fish -c "cat $out_gotopt2 | source; set | grep -E '^(gotopt2_|my_prefix)' | sort" > "$env_gotopt2_fish"
-          fish -c "source $parser_fish; parse_args \$argv; set | grep -E '^(gotopt2_|my_prefix)' | sort" -- "${args[@]}" > "$env_generator_fish"
+          # We parse out the variable names only to ensure they both exported the correct variables.
+          # The bash generated file has $VAR='VAL' and we convert this list of keys to compare against fish.
+          bash -c "cat $out_gotopt2 | grep -E '^(gotopt2_|my_prefix)' | cut -d'=' -f1 | sort" > "$env_gotopt2_fish"
+          fish -c "source $parser_fish; parse_args \$argv; set | grep -E '^(gotopt2_|my_prefix)' | string split ' ' -f1 | sort" -- "${args[@]}" > "$env_generator_fish"
+
+          # We also want to filter out 'args__' if it's empty, because bash outputs nothing for it,
+          # but fish's `set` will still list the variable key with empty contents.
+          sed -i '/args__/d' "$env_gotopt2_fish"
+          sed -i '/args__/d' "$env_generator_fish"
 
           if ! diff -u "$env_gotopt2_fish" "$env_generator_fish"; then
               echo "Fish environment variables differ for test: $name"
@@ -138,5 +154,14 @@ flags:
   type: bool
 '
 run_test "TrueValue" "$CONFIG_4" "--mybool"
+
+CONFIG_7='
+usage: "My custom usage"
+flags:
+- name: "foo"
+  type: string
+  help: "Foo configuration"
+'
+run_test "CustomUsage" "$CONFIG_7" "--help"
 
 echo "All tests passed."

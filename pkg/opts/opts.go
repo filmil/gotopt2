@@ -15,6 +15,8 @@ import (
 
 // Config represents the option parsing configuration
 type Config struct {
+	// Usage is the general usage description.
+	Usage string `yaml:"usage"`
 	// Flags describes each flag to be parsed and its configuration.
 	Flags []Flag `yaml:"flags"`
 	// FalseValue is the value to generate for a false-valued Boolean variable.
@@ -172,6 +174,14 @@ func ParseConfig(r io.Reader) (Config, error) {
 
 func GenerateFlagSet(c Config) (*flag.FlagSet, error) {
 	fs := flag.NewFlagSet("", flag.ContinueOnError)
+	fs.Usage = func() {
+		if c.Usage != "" {
+			fmt.Fprintln(fs.Output(), c.Usage)
+		} else {
+			fmt.Fprintln(fs.Output(), "Usage:")
+		}
+		fs.PrintDefaults()
+	}
 	for _, f := range c.Flags {
 		switch f.Type {
 		case FTString:
