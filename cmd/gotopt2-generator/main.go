@@ -100,6 +100,8 @@ func generateShell(c opts.Config, w io.Writer, shell string) error {
 func varName(name, prefix string, allCaps bool) string {
 	r := strings.NewReplacer("-", "_")
 	name = r.Replace(name)
+	name = opts.SanitizeBashIdentifier(name)
+	prefix = opts.SanitizeBashIdentifier(prefix)
 	fullVarName := fmt.Sprintf("%sgotopt2_%s", prefix, name)
 	if allCaps {
 		fullVarName = strings.ToUpper(fullVarName)

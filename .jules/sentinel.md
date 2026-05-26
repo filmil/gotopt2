@@ -6,3 +6,7 @@
 **Vulnerability:** Command injection was possible because `gotopt2` output bash variables without sanitizing the `name`, `prefix`, and `declaration` configuration inputs. An attacker could inject arbitrary commands by providing values like `foo;echo INJECTED`.
 **Learning:** Even configurable prefixes and variable names can be vectors for command injection if the output is evaluated (`eval`). Unsanitized configuration strings can break out of variable assignment contexts.
 **Prevention:** Strictly sanitize all variables, prefixes, and declarations using an allowlist approach to ensure only valid Bash identifier characters (`[a-zA-Z0-9_]`) or specific declaration characters (`[a-zA-Z0-9_ \-]`) are emitted into shell scripts.
+## 2025-02-05 - [Command Injection via Configuration Parameters in gotopt2-generator]
+**Vulnerability:** Command injection was possible because `gotopt2-generator` output bash scripts without sanitizing the `name` and `prefix` configuration inputs. An attacker could inject arbitrary commands directly into the generated script by providing values like `evil;echo INJECTED`.
+**Learning:** Configurable prefixes and variable names can be vectors for command injection if the output is evaluated or sourced as a script. Unsanitized configuration strings can break out of variable assignment contexts in the generated file.
+**Prevention:** Strictly sanitize all variables, prefixes, and declarations using an allowlist approach to ensure only valid Bash identifier characters (`[a-zA-Z0-9_]`) are emitted into shell scripts.
