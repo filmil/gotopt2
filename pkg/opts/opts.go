@@ -214,7 +214,8 @@ func shellQuote(s string) string {
 	return "'" + strings.ReplaceAll(s, "'", "'\"'\"'") + "'"
 }
 
-func sanitizeBashIdentifier(s string) string {
+// SanitizeBashIdentifier ensures a string contains only valid characters for bash variables
+func SanitizeBashIdentifier(s string) string {
 	var sb strings.Builder
 	for _, r := range s {
 		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_' {
@@ -237,8 +238,8 @@ func sanitizeBashDecl(s string) string {
 func declLine(name, value, prefix, decl string, toUpper, quote bool) string {
 	r := strings.NewReplacer("-", "_")
 	name = r.Replace(name)
-	name = sanitizeBashIdentifier(name)
-	prefix = sanitizeBashIdentifier(prefix)
+	name = SanitizeBashIdentifier(name)
+	prefix = SanitizeBashIdentifier(prefix)
 	decl = sanitizeBashDecl(decl)
 	fullVarName := fmt.Sprintf("%vgotopt2_%v", prefix, name)
 	if toUpper {
