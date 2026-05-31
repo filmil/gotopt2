@@ -119,6 +119,7 @@ If you prefer to avoid the dependency on `gotopt2` at runtime or want to avoid d
 
 ```console
 gotopt2-generator <<EOF > my_parser.sh
+usage: "Usage: my_script.sh [options]"
 flags:
 - name: "foo"
   type: string
@@ -142,7 +143,7 @@ parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --help)
-        echo "Usage:" >&2
+        echo "Usage: my_script.sh [options]" >&2
         echo "  --foo" >&2
         echo "         (default: \"something\")" >&2
         echo "  --baz" >&2
@@ -216,7 +217,8 @@ information provided in the configuration.
 
 | Config Element | Child Elements | Description |
 | -- | -- | -- |
-| top level | falseValue, flags | This is the entire configuration file. |
+| top level | falseValue, flags, usage | This is the entire configuration file. |
+| usage | | string: "": If set, this string is used as the usage description when `--help` is used. |
 | ALL_CAPS | | bool (false): if set, generates ALL_CAPS variables. |
 | prefix | | string: "": If set, this string is prepended to generated variable names. |
 | declaration | | string: "": If set, this string is used as the declaration (e.g. "readonly", or "local")
