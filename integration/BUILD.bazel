@@ -59,3 +59,27 @@ sh_test(
         ":example_parser",
     ],
 )
+
+gotopt2_generate_bash(
+    name = "usage_parser",
+    src = "usage_test.yaml",
+    out = "usage_parser.sh",
+    generator = "@gotopt2//cmd/gotopt2-generator",
+)
+
+sh_library(
+    name = "usage_parser_lib",
+    srcs = ["usage_parser.sh"],
+)
+
+sh_test(
+    name = "usage_check_test",
+    srcs = ["usage_check.sh"],
+    args = [
+        "$(location :usage_parser)",
+    ],
+    data = [
+        ":usage_parser",
+        ":usage_parser_lib",
+    ],
+)

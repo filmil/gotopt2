@@ -1,0 +1,5 @@
+usage: "Usage: my_script.sh [options]"
+flags:
+  - name: "my-flag"
+    type: "string"
+    help: "This is a test flag."
