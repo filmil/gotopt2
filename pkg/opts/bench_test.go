@@ -16,3 +16,19 @@ func BenchmarkWrArgs(b *testing.B) {
 		wrArgs(args, fs, "prefix", "local", true, io.Discard)
 	}
 }
+
+func BenchmarkWrFlags(b *testing.B) {
+	fs := flag.NewFlagSet("test", flag.ContinueOnError)
+	fs.String("str1", "val1", "help")
+	fs.Bool("bool1", true, "help")
+	fs.Int("int1", 42, "help")
+	v := StringListFlag{}
+	fs.Var(&v, "list1", "help")
+
+	fs.Parse([]string{"-str1=hello", "-bool1=false", "-int1=100", "-list1=a,b,c"})
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		wrFlags(fs, "false", "true", true, "prefix", "local", io.Discard)
+	}
+}
