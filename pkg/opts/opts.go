@@ -274,11 +274,11 @@ func wrFlags(fs *flag.FlagSet, falseVal string, trueVal string, toUpper bool,
 		name := f.Name
 		quote := true
 		if _, ok := f.Value.(*StringListFlag); ok {
-			name = fmt.Sprintf("%v__list", name)
+			name = name + "__list"
 			quote = false
 		}
 		dl := declLine(name, v, prefix, decl, toUpper, quote)
-		out = append(out, fmt.Sprintf("%s\n", dl))
+		out = append(out, dl+"\n")
 	})
 	// Ensure that the output is stable.
 	sort.Strings(out)
