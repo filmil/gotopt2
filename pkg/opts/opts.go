@@ -214,25 +214,23 @@ func shellQuote(s string) string {
 	return "'" + strings.ReplaceAll(s, "'", "'\"'\"'") + "'"
 }
 
-// SanitizeBashIdentifier ensures a string contains only valid characters for bash variables
-func SanitizeBashIdentifier(s string) string {
+func sanitize(s string, allowDashAndSpace bool) string {
 	var sb strings.Builder
 	for _, r := range s {
-		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_' {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_' || (allowDashAndSpace && (r == '-' || r == ' ')) {
 			sb.WriteRune(r)
 		}
 	}
 	return sb.String()
 }
 
+// SanitizeBashIdentifier ensures a string contains only valid characters for bash variables
+func SanitizeBashIdentifier(s string) string {
+	return sanitize(s, false)
+}
+
 func sanitizeBashDecl(s string) string {
-	var sb strings.Builder
-	for _, r := range s {
-		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_' || r == '-' || r == ' ' {
-			sb.WriteRune(r)
-		}
-	}
-	return sb.String()
+	return sanitize(s, true)
 }
 
 func declLine(name, value, prefix, decl string, toUpper, quote bool) string {
