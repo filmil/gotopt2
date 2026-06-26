@@ -154,7 +154,7 @@ func (s *StringListFlag) Set(v string) error {
 func (s *StringListFlag) String() string {
 	q := make([]string, len(s.args))
 	for i, a := range s.args {
-		q[i] = shellQuote(a)
+		q[i] = ShellQuote(a)
 	}
 	return fmt.Sprintf("(%v)", strings.Join(q, " "))
 }
@@ -209,8 +209,8 @@ func GenerateFlagSet(c Config) (*flag.FlagSet, error) {
 	return fs, nil
 }
 
-// shellQuote wraps a string in single quotes and safely escapes existing single quotes.
-func shellQuote(s string) string {
+// ShellQuote wraps a string in single quotes and safely escapes existing single quotes.
+func ShellQuote(s string) string {
 	return "'" + strings.ReplaceAll(s, "'", "'\"'\"'") + "'"
 }
 
@@ -243,7 +243,7 @@ func declLine(name, value, prefix, decl string, toUpper, quote bool) string {
 	if toUpper {
 		fullVarName = strings.ToUpper(fullVarName)
 	}
-	assignment := fmt.Sprintf("%v=%s", fullVarName, shellQuote(value))
+	assignment := fmt.Sprintf("%v=%s", fullVarName, ShellQuote(value))
 	if !quote {
 		assignment = fmt.Sprintf("%v=%v", fullVarName, value)
 	}
@@ -294,7 +294,7 @@ func wrArgs(args []string, fs *flag.FlagSet, prefix, decl string, toUpper bool, 
 	}
 	a := make([]string, 0, fs.NArg())
 	for _, arg := range fs.Args() {
-		a = append(a, shellQuote(arg))
+		a = append(a, ShellQuote(arg))
 	}
 	allArgs := strings.Join(a, " ")
 	dl := declLine("args__", fmt.Sprintf("(%s)", allArgs), prefix, decl, toUpper, false)
