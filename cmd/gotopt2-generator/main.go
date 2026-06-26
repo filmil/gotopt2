@@ -35,12 +35,22 @@ type TemplateData struct {
 }
 
 type TemplateFlag struct {
-	Name          string
-	Type          opts.FType
-	ActualVarName string
-	DefaultValue  string
-	TrueValue     string
-	Help          string
+	Name               string
+	Type               opts.FType
+	ActualVarName      string
+	DefaultValue       string
+	DefaultValueQuoted string
+	TrueValue          string
+	TrueValueQuoted    string
+	Help               string
+	HelpLineQuoted     string
+}
+
+// fishQuote wraps a string in single quotes and safely escapes existing backslashes and single quotes for fish shell.
+func fishQuote(s string) string {
+	s = strings.ReplaceAll(s, "\\", "\\\\")
+	s = strings.ReplaceAll(s, "'", "\\'")
+	return "'" + s + "'"
 }
 
 func run(r io.Reader, shell string, w io.Writer) error {
@@ -84,13 +94,32 @@ func generateShell(c opts.Config, w io.Writer, shell string) error {
 			}
 		}
 
+		defQuoted := ""
+		trueValQuoted := ""
+		helpLineQuoted := ""
+
+		helpLine := fmt.Sprintf("        %s (default: %q)", f.Help, def)
+
+		if shell == "fish" {
+			defQuoted = fishQuote(def)
+			trueValQuoted = fishQuote(trueVal)
+			helpLineQuoted = fishQuote(helpLine)
+		} else {
+			defQuoted = opts.ShellQuote(def)
+			trueValQuoted = opts.ShellQuote(trueVal)
+			helpLineQuoted = opts.ShellQuote(helpLine)
+		}
+
 		data.Flags = append(data.Flags, TemplateFlag{
-			Name:          f.Name,
-			Type:          f.Type,
-			ActualVarName: actualVarName,
-			DefaultValue:  def,
-			TrueValue:     trueVal,
-			Help:          f.Help,
+			Name:               f.Name,
+			Type:               f.Type,
+			ActualVarName:      actualVarName,
+			DefaultValue:       def,
+			DefaultValueQuoted: defQuoted,
+			TrueValue:          trueVal,
+			TrueValueQuoted:    trueValQuoted,
+			Help:               f.Help,
+			HelpLineQuoted:     helpLineQuoted,
 		})
 	}
 

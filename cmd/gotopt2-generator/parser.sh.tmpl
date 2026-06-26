@@ -6,7 +6,7 @@ parse_args() {
   {{- if eq .Type 4 }}
   {{ .ActualVarName }}__list=()
   {{- else }}
-  {{ .ActualVarName }}="{{ .DefaultValue }}"
+  {{ .ActualVarName }}={{ .DefaultValueQuoted }}
   {{- end }}
 {{- end }}
   {{ .ArgsVarName }}=()
@@ -21,14 +21,14 @@ parse_args() {
 {{- end }}
 {{- range .Flags }}
         echo "  --{{ .Name }}" >&2
-        echo "        {{ .Help }} (default: \"{{ .DefaultValue }}\")" >&2
+        echo {{ .HelpLineQuoted }} >&2
 {{- end }}
         exit 11
         ;;
 {{- range .Flags }}
   {{- if eq .Type 3 }}
       --{{ .Name }})
-        {{ .ActualVarName }}="{{ .TrueValue }}"
+        {{ .ActualVarName }}={{ .TrueValueQuoted }}
         shift
         ;;
   {{- else if eq .Type 4 }}
