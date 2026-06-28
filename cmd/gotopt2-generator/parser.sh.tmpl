@@ -15,7 +15,7 @@ parse_args() {
     case "$1" in
       --help)
 {{- if .Usage }}
-        echo "{{ .Usage }}" >&2
+        echo {{ .UsageQuoted }} >&2
 {{- else }}
         echo "Usage:" >&2
 {{- end }}
