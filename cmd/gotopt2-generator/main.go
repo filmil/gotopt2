@@ -30,6 +30,7 @@ func main() {
 
 type TemplateData struct {
 	Usage       string
+	UsageQuoted string
 	Flags       []TemplateFlag
 	ArgsVarName string
 }
@@ -73,8 +74,16 @@ func generateShell(c opts.Config, w io.Writer, shell string) error {
 		return fmt.Errorf("parsing template: %v", err)
 	}
 
+	usageQuoted := ""
+	if shell == "fish" {
+		usageQuoted = fishQuote(c.Usage)
+	} else {
+		usageQuoted = opts.ShellQuote(c.Usage)
+	}
+
 	data := TemplateData{
 		Usage:       c.Usage,
+		UsageQuoted: usageQuoted,
 		ArgsVarName: varName("args__", c.Prefix, c.AllCaps),
 	}
 

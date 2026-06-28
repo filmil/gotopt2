@@ -15,7 +15,7 @@ function parse_args
     switch $argv[1]
       case --help
 {{- if .Usage }}
-        echo "{{ .Usage }}" >&2
+        echo {{ .UsageQuoted }} >&2
 {{- else }}
         echo "Usage:" >&2
 {{- end }}
