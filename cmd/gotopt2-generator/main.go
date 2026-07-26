@@ -120,7 +120,7 @@ func generateShell(c opts.Config, w io.Writer, shell string) error {
 		}
 
 		data.Flags = append(data.Flags, TemplateFlag{
-			Name:               f.Name,
+			Name:               opts.SanitizeFlagName(f.Name),
 			Type:               f.Type,
 			ActualVarName:      actualVarName,
 			DefaultValue:       def,

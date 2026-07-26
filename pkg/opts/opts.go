@@ -229,6 +229,17 @@ func SanitizeBashIdentifier(s string) string {
 	return sanitize(s, false)
 }
 
+// SanitizeFlagName ensures a string contains only valid characters for flag names (alphanumeric, -, _)
+func SanitizeFlagName(s string) string {
+	var sb strings.Builder
+	for _, r := range s {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '-' || r == '_' {
+			sb.WriteRune(r)
+		}
+	}
+	return sb.String()
+}
+
 func sanitizeBashDecl(s string) string {
 	return sanitize(s, true)
 }
