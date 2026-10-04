@@ -39,4 +39,11 @@ bazel_dep(name = "bazel_lib", version = "3.3.1")
 bazel_dep(name = "bazel_skylib_gazelle_plugin", version = "1.9.0")
 bazel_dep(name = "bazel_skylib", version = "1.9.0")
 bazel_dep(name = "stardoc", version = "0.8.1")
-bazel_dep(name = "protobuf", version = "35.1")
+
+# protobuf is here only to raise the version that stardoc's documentation
+# build gets, so it is a dev dependency. As a regular one it raised every
+# consumer to protobuf 35 or later, which registers a crate_universe
+# extension with no lockfile; with rules_rust 0.74.0 in the consumer's
+# graph, that fails `bazel mod deps` and `bazel mod tidy`
+# (filmil/bazel-ebook#103).
+bazel_dep(name = "protobuf", version = "35.1", dev_dependency = True)
